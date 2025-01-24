@@ -19,7 +19,7 @@ public class Bubble : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         
         // Aumentamos el drag base
-        rb.drag = 2f; // Ajusta este valor según necesites
+        rb.linearDamping = 2f; // Ajusta este valor según necesites
     }
 
     void FixedUpdate()
@@ -40,24 +40,24 @@ public class Bubble : MonoBehaviour
         if (isMoving)
         {
             currentVelocity = Vector2.Lerp(currentVelocity, movement * moveSpeed, acceleration * Time.fixedDeltaTime);
-            rb.velocity = currentVelocity;
+            rb.linearVelocity = currentVelocity;
         }
 
         // Aplicamos frenado adicional si es necesario
         if (isBraking)
         {
-            Vector2 oppositeForce = -rb.velocity.normalized * brakingForce;
+            Vector2 oppositeForce = -rb.linearVelocity.normalized * brakingForce;
             rb.AddForce(oppositeForce, ForceMode2D.Force);
         }
 
         // Detectamos si se ha detenido por la fricción
-        if (rb.velocity.magnitude < 0.1f)
+        if (rb.linearVelocity.magnitude < 0.1f)
         {
             isMoving = false;
             isBraking = false;
             movement = Vector2.zero;
             currentVelocity = Vector2.zero;
-            rb.velocity = Vector2.zero; // Aseguramos que se detenga completamente
+            rb.linearVelocity = Vector2.zero; // Aseguramos que se detenga completamente
         }
     }
 
