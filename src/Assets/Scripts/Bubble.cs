@@ -18,7 +18,7 @@ public class Bubble : MonoBehaviour
         bubbleSprite = GetComponentInChildren<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         
-        // Aumentamos el damping base
+        // Aumentamos el drag base
         rb.linearDamping = 2f; // Ajusta este valor según necesites
     }
 
