@@ -6,16 +6,19 @@ public class Bubble : MonoBehaviour
     private Vector2 direction = Vector2.zero;
     private bool isMoving = false;
     private float speed = 7.5f; // Reducida de 5f a 3f
-    private int size = 1; // Tiles que ocupa la burbuja
+    private int size = 0; // Cambiado de 1 a 0
     private SpriteRenderer spriteRenderer;
     private Rigidbody2D rb;
     private bool isInsideMap = false;
     private Vector2 targetPosition;
     private float stoppingLerpSpeed = 0.1f; // Nueva variable para controlar la suavidad de la parada
-    private float currentScale = 1f;
-    private float targetScale = 1f;
+    private float currentScale = 0f; // Cambiado de 1f a 0f
+    private float targetScale = 0f;  // Cambiado de 1f a 0f
     private float scalelinearVelocity = 0f;
     private float scaleDuration = 0.25f; // Duración de la transición en segundos
+    private Vector2 initialPosition;
+    private bool hitWall = false;
+    private bool isExploding = false;
 
     private void Start()
     {
@@ -26,6 +29,9 @@ public class Bubble : MonoBehaviour
         rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         targetPosition = rb.position;
+        initialPosition = rb.position;
+        transform.localScale = Vector3.zero; // Asegurar que empiece con escala 0
+        SetSize(1); // Añadido al final de Start
     }
 
     private void FixedUpdate()
@@ -47,6 +53,13 @@ public class Bubble : MonoBehaviour
             // Asegurar que se detenga completamente
             rb.linearVelocity = Vector2.zero;
             rb.position = targetPosition;
+            
+            // Restaurar tamaño si llegamos a la posición inicial después de morir
+            if (hitWall && targetPosition == initialPosition)
+            {
+                hitWall = false;
+                SetSize(1);
+            }
         }
     }
 
@@ -62,6 +75,8 @@ public class Bubble : MonoBehaviour
 
     private void CheckInput()
     {
+        if (isExploding) return; // No permitir movimiento mientras explota
+        
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
             SetDirection(Vector2.up);
         else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
@@ -83,7 +98,14 @@ public class Bubble : MonoBehaviour
         if (other.TryGetComponent<Map>(out var map))
         {
             isInsideMap = true;
-            if (!map.IsWall())
+            if (map.IsWall())
+            {
+                hitWall = true;
+                SetSize(0); // Reducir tamaño a 0 al morir
+                Stop();
+                targetPosition = initialPosition;
+            }
+            else if (!map.IsWall())
             {
                 Stop();
             }
@@ -105,7 +127,10 @@ public class Bubble : MonoBehaviour
 
     private void UpdateColor()
     {
-        spriteRenderer.color = isInsideMap ? Color.red : Color.white;
+        if (hitWall)
+            spriteRenderer.color = Color.blue;
+        else
+            spriteRenderer.color = isInsideMap ? Color.red : Color.white;
     }
 
     private void UpdateScale()
@@ -114,6 +139,12 @@ public class Bubble : MonoBehaviour
         {
             currentScale = Mathf.SmoothDamp(currentScale, targetScale, ref scalelinearVelocity, scaleDuration);
             transform.localScale = new Vector3(currentScale, currentScale, 1f);
+            
+            // Actualizar estado de explosión
+            if (targetScale == 0)
+            {
+                isExploding = currentScale > 0.01f;
+            }
         }
     }
 
@@ -123,25 +154,20 @@ public class Bubble : MonoBehaviour
         
         isMoving = false;
         
-        // Calcular la posición objetivo redondeada
-        float roundedX = Mathf.Round(transform.position.x - 0.5f) + 0.5f;
-        float roundedY = Mathf.Round(transform.position.y - 0.5f) + 0.5f;
+        if (!hitWall)
+        {
+            // Calcular la posición objetivo redondeada solo si no golpeó una pared
+            float roundedX = Mathf.Round(transform.position.x - 0.5f) + 0.5f;
+            float roundedY = Mathf.Round(transform.position.y - 0.5f) + 0.5f;
 
-        // Ajustar el offset según la dirección
-        if (direction.x > 0) {
-            roundedX += GetOffsetFromSize(size);
-        }
-        else if (direction.x < 0) {
-            roundedX -= GetOffsetFromSize(size);
-        }
-        else if (direction.y > 0) {
-            roundedY += GetOffsetFromSize(size);
-        }
-        else if (direction.y < 0) {
-            roundedY -= GetOffsetFromSize(size);
-        }
+            if (direction.x > 0) roundedX += GetOffsetFromSize(size);
+            else if (direction.x < 0) roundedX -= GetOffsetFromSize(size);
+            else if (direction.y > 0) roundedY += GetOffsetFromSize(size);
+            else if (direction.y < 0) roundedY -= GetOffsetFromSize(size);
 
-        targetPosition = new Vector2(roundedX, roundedY);
+            targetPosition = new Vector2(roundedX, roundedY);
+        }
+        
         direction = Vector2.zero;
     }
 
@@ -149,6 +175,10 @@ public class Bubble : MonoBehaviour
     {
         size = newSize;
         targetScale = newSize;
+        if (newSize == 0)
+        {
+            isExploding = true;
+        }
     }
 
     static int GetOffsetFromSize(int tileSize)
