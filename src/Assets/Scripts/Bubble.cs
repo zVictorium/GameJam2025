@@ -1,10 +1,11 @@
+using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 
 public class Bubble : MonoBehaviour
 {
     private Vector2 direction = Vector2.zero;
     private bool isMoving = false;
-    private float speed = 5f; // Reducida de 5f a 3f
+    private float speed = 7.5f; // Reducida de 5f a 3f
     private int size = 1; // Tiles que ocupa la burbuja
     private SpriteRenderer spriteRenderer;
     private Rigidbody2D rb;
@@ -122,35 +123,26 @@ public class Bubble : MonoBehaviour
         
         isMoving = false;
         
-        // Calcular la posición objetivo redondeada con el offset según la dirección
-        float roundedX = Mathf.Round(transform.position.x);
-        float roundedY = Mathf.Round(transform.position.y);
+        // Calcular la posición objetivo redondeada
+        float roundedX = Mathf.Round(transform.position.x - 0.5f) + 0.5f;
+        float roundedY = Mathf.Round(transform.position.y - 0.5f) + 0.5f;
 
         // Ajustar el offset según la dirección
         if (direction.x > 0) {
             roundedX += GetOffsetFromSize(size);
-            roundedX += 0.5f;
-            roundedY += 0.5f;
         }
-        if (direction.x < 0) {
+        else if (direction.x < 0) {
             roundedX -= GetOffsetFromSize(size);
-            roundedX -= 0.5f;
-            roundedY += 0.5f;
         }
-        if (direction.y > 0) {
-            roundedX -= 0.5f;
+        else if (direction.y > 0) {
             roundedY += GetOffsetFromSize(size);
-            roundedY += 0.5f;
         }
-        if (direction.y < 0) {
-            roundedX -= 0.5f;
+        else if (direction.y < 0) {
             roundedY -= GetOffsetFromSize(size);
-            roundedY -= 0.5f;
         }
 
         targetPosition = new Vector2(roundedX, roundedY);
         direction = Vector2.zero;
-        // Eliminamos el reseteo inmediato de velocidades para permitir una parada más suave
     }
 
     public void SetSize(int newSize)
@@ -161,8 +153,10 @@ public class Bubble : MonoBehaviour
 
     static int GetOffsetFromSize(int tileSize)
     {
-        if ((tileSize - 1) % 2 == 0 && tileSize >= 1)
-            return (tileSize - 1) / 2;
-        return 0;
+        if (tileSize == 1) return 1;
+        if (tileSize == 3) return 2;
+        if (tileSize == 5) return 3; 
+        if (tileSize == 7) return 4; 
+        return 5; 
     }
 }
