@@ -1,99 +1,150 @@
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 public class Bubble : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed = 5f;
-    [SerializeField] private float acceleration = 2f;
-    [SerializeField] private float brakingForce = 5f; // Nueva variable para la fuerza de frenado
-    private bool isBraking = false; // Nueva variable para controlar el frenado
-    private Vector2 movement;
-    private Vector2 currentVelocity;
+    private Vector2 direction = Vector2.zero;
     private bool isMoving = false;
+    private float speed = 5f; // Reducida de 5f a 3f
+    private int size = 1; // Tiles que ocupa la burbuja
+    private SpriteRenderer spriteRenderer;
     private Rigidbody2D rb;
-    private SpriteRenderer bubbleSprite;
+    private bool isInsideMap = false;
+    private Vector2 targetPosition;
+    private float stoppingLerpSpeed = 0.1f; // Nueva variable para controlar la suavidad de la parada
 
-    void Start()
+    private void Start()
     {
-        bubbleSprite = GetComponentInChildren<SpriteRenderer>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
-        
-        // Aumentamos el drag base
-        rb.linearDamping = 2f; // Ajusta este valor según necesites
+        rb.gravityScale = 0f;
+        rb.interpolation = RigidbodyInterpolation2D.Interpolate;
+        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        targetPosition = rb.position;
+        SetSize(3);
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
+    {
+        if (isMoving)
+        {
+            Vector2 newPos = rb.position + direction * speed * Time.fixedDeltaTime;
+            rb.MovePosition(Vector2.Lerp(rb.position, newPos, 0.8f));
+        }
+        else if (Vector2.Distance(rb.position, targetPosition) > 0.01f)
+        {
+            // Movimiento más suave al detenerse
+            rb.MovePosition(Vector2.Lerp(rb.position, targetPosition, stoppingLerpSpeed));
+            // Reducir gradualmente la velocidad
+            rb.velocity = Vector2.Lerp(rb.velocity, Vector2.zero, stoppingLerpSpeed);
+        }
+        else
+        {
+            // Asegurar que se detenga completamente
+            rb.velocity = Vector2.zero;
+            rb.position = targetPosition;
+        }
+    }
+
+    private void Update()
     {
         if (!isMoving)
         {
-            movement.x = Input.GetAxisRaw("Horizontal");
-            movement.y = Input.GetAxisRaw("Vertical");
-            
-            if (movement.magnitude > 0)
+            CheckInput();
+        }
+        UpdateColor();
+    }
+
+    private void CheckInput()
+    {
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+            SetDirection(Vector2.up);
+        else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+            SetDirection(Vector2.down);
+        else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
+            SetDirection(Vector2.left);
+        else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
+            SetDirection(Vector2.right);
+    }
+
+    private void SetDirection(Vector2 newDirection)
+    {
+        direction = newDirection;
+        isMoving = true;
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.TryGetComponent<Map>(out var map))
+        {
+            isInsideMap = true;
+            if (!map.IsWall())
             {
-                movement = movement.normalized;
-                isMoving = true;
+                Stop();
             }
         }
+    }
 
-        // Solo aplicamos fuerza si estamos en movimiento
-        if (isMoving)
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.TryGetComponent<Map>(out var map))
         {
-            currentVelocity = Vector2.Lerp(currentVelocity, movement * moveSpeed, acceleration * Time.fixedDeltaTime);
-            rb.linearVelocity = currentVelocity;
-        }
-
-        // Aplicamos frenado adicional si es necesario
-        if (isBraking)
-        {
-            Vector2 oppositeForce = -rb.linearVelocity.normalized * brakingForce;
-            rb.AddForce(oppositeForce, ForceMode2D.Force);
-        }
-
-        // Detectamos si se ha detenido por la fricción
-        if (rb.linearVelocity.magnitude < 0.1f)
-        {
-            isMoving = false;
-            isBraking = false;
-            movement = Vector2.zero;
-            currentVelocity = Vector2.zero;
-            rb.linearVelocity = Vector2.zero; // Aseguramos que se detenga completamente
-            
-            // Centramos la burbuja en el tile más cercano
-            Vector2 tileCenter = GetNearestTileCenter();
-            transform.position = tileCenter;
+            isInsideMap = false;
         }
     }
 
-    private Vector2 GetNearestTileCenter()
+    private void UpdateColor()
     {
-        Vector2 currentPos = transform.position;
-        float x = Mathf.Floor(currentPos.x) + 0.5f;
-        float y = Mathf.Floor(currentPos.y) + 0.5f;
-        return new Vector2(x, y);
+        spriteRenderer.color = isInsideMap ? Color.red : Color.white;
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    private void Stop()
     {
-        Map map = other.GetComponent<Map>();
-        if (map != null && map.IsWall())
-        {
-            bubbleSprite.color = Color.red;
-            isMoving = false;
-            movement = Vector2.zero;
-            isBraking = true;
-            Debug.Log("Entrando en pared y frenando");
+        if (!isMoving) return;
+        
+        isMoving = false;
+        
+        // Calcular la posición objetivo redondeada con el offset según la dirección
+        float roundedX = Mathf.Round(transform.position.x);
+        float roundedY = Mathf.Round(transform.position.y);
+
+        // Ajustar el offset según la dirección
+        if (direction.x > 0) {
+            roundedX += GetOffsetFromSize(size);
+            roundedX += 0.5f;
+            roundedY += 0.5f;
         }
+        if (direction.x < 0) {
+            roundedX -= GetOffsetFromSize(size);
+            roundedX -= 0.5f;
+            roundedY += 0.5f;
+        }
+        if (direction.y > 0) {
+            roundedX -= 0.5f;
+            roundedY += GetOffsetFromSize(size);
+            roundedY += 0.5f;
+        }
+        if (direction.y < 0) {
+            roundedX -= 0.5f;
+            roundedY -= GetOffsetFromSize(size);
+            roundedY -= 0.5f;
+        }
+
+        targetPosition = new Vector2(roundedX, roundedY);
+        direction = Vector2.zero;
+        // Eliminamos el reseteo inmediato de velocidades para permitir una parada más suave
     }
 
-    void OnTriggerExit2D(Collider2D other)
+    public void SetSize(int newSize)
     {
-        Map map = other.GetComponent<Map>();
-        if (map != null && map.IsWall())
-        {
-            bubbleSprite.color = Color.white;
-            isBraking = false;
-            Debug.Log("Saliendo de la pared");
-        }
+        size = newSize;
+        transform.localScale = new Vector3(newSize, newSize, 1f);
+    }
+
+    static int GetOffsetFromSize(int tileSize)
+    {
+        if ((tileSize - 1) % 2 == 0 && tileSize >= 1)
+            return (tileSize - 1) / 2;
+        return 0;
     }
 }
