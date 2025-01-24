@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class Bubble : MonoBehaviour
 {
@@ -62,7 +63,7 @@ public class Bubble : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.GetComponent<BoxCollider2D>() != null)
+        if (other.GetComponent<BoxCollider2D>() != null || other.GetComponent<TilemapCollider2D>() != null)
         {
             bubbleSprite.color = Color.red;
             isMoving = false;
@@ -74,7 +75,7 @@ public class Bubble : MonoBehaviour
 
     void OnTriggerExit2D(Collider2D other)
     {
-        if (other.GetComponent<BoxCollider2D>() != null)
+        if (other.GetComponent<BoxCollider2D>() != null || other.GetComponent<TilemapCollider2D>() != null)
         {
             bubbleSprite.color = Color.white;
             isBraking = false; // Desactivamos el frenado
