@@ -18,7 +18,9 @@ public class Bubble : MonoBehaviour
     private float scaleDuration = 0.25f; // Duración de la transición en segundos
     private Vector2 initialPosition;
     private bool hitWall = false;
-    private bool isExploding = false;
+    private bool isShrinking = false;
+    private Animator animator;
+    private bool isPlayingDeathAnimation = false;
 
     private void Start()
     {
@@ -32,10 +34,13 @@ public class Bubble : MonoBehaviour
         initialPosition = rb.position;
         transform.localScale = Vector3.zero; // Asegurar que empiece con escala 0
         SetSize(1); // Añadido al final de Start
+        animator = GetComponent<Animator>();
     }
 
     private void FixedUpdate()
     {
+        if (isPlayingDeathAnimation) return; // No mover mientras la animación de muerte está activa
+
         if (isMoving)
         {
             Vector2 newPos = rb.position + direction * speed * Time.fixedDeltaTime;
@@ -54,8 +59,8 @@ public class Bubble : MonoBehaviour
             rb.linearVelocity = Vector2.zero;
             rb.position = targetPosition;
             
-            // Restaurar tamaño si llegamos a la posición inicial después de morir
-            if (hitWall && targetPosition == initialPosition)
+            // Solo restaurar tamaño si no está encogiendo y está en la posición inicial
+            if (hitWall && !isShrinking && targetPosition == initialPosition)
             {
                 hitWall = false;
                 SetSize(1);
@@ -75,8 +80,6 @@ public class Bubble : MonoBehaviour
 
     private void CheckInput()
     {
-        if (isExploding) return; // No permitir movimiento mientras explota
-        
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
             SetDirection(Vector2.up);
         else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
@@ -89,6 +92,7 @@ public class Bubble : MonoBehaviour
 
     private void SetDirection(Vector2 newDirection)
     {
+        if (isShrinking || hitWall) return; // No permitir movimiento mientras se encoge
         direction = newDirection;
         isMoving = true;
     }
@@ -101,9 +105,10 @@ public class Bubble : MonoBehaviour
             if (map.IsWall())
             {
                 hitWall = true;
-                SetSize(0); // Reducir tamaño a 0 al morir
+                SetSize(0);
                 Stop();
-                targetPosition = initialPosition;
+                animator.SetTrigger("Death");
+                isPlayingDeathAnimation = true;
             }
             else if (!map.IsWall())
             {
@@ -140,10 +145,12 @@ public class Bubble : MonoBehaviour
             currentScale = Mathf.SmoothDamp(currentScale, targetScale, ref scalelinearVelocity, scaleDuration);
             transform.localScale = new Vector3(currentScale, currentScale, 1f);
             
-            // Actualizar estado de explosión
-            if (targetScale == 0)
+            // Si estamos encogiendo y llegamos casi a 0
+            if (isShrinking && currentScale < 0.01f)
             {
-                isExploding = currentScale > 0.01f;
+                currentScale = 0f;
+                transform.localScale = Vector3.zero;
+                isShrinking = false;
             }
         }
     }
@@ -177,7 +184,7 @@ public class Bubble : MonoBehaviour
         targetScale = newSize;
         if (newSize == 0)
         {
-            isExploding = true;
+            isShrinking = true;
         }
     }
 
@@ -188,5 +195,14 @@ public class Bubble : MonoBehaviour
         if (tileSize == 5) return 3; 
         if (tileSize == 7) return 4; 
         return 5; 
+    }
+
+    // Método que será llamado por el Animation Event al final de la animación de muerte
+    public void OnDeathAnimationComplete()
+    {
+        isPlayingDeathAnimation = false;
+        targetPosition = initialPosition;
+        rb.position = initialPosition;
+        transform.position = initialPosition;
     }
 }
