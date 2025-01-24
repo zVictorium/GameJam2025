@@ -18,8 +18,8 @@ public class Bubble : MonoBehaviour
         bubbleSprite = GetComponentInChildren<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         
-        // Aumentamos el drag base
-        rb.drag = 2f; // Ajusta este valor según necesites
+        // Aumentamos el damping base
+        rb.linearDamping = 2f; // Ajusta este valor según necesites
     }
 
     void FixedUpdate()
@@ -40,46 +40,60 @@ public class Bubble : MonoBehaviour
         if (isMoving)
         {
             currentVelocity = Vector2.Lerp(currentVelocity, movement * moveSpeed, acceleration * Time.fixedDeltaTime);
-            rb.velocity = currentVelocity;
+            rb.linearVelocity = currentVelocity;
         }
 
         // Aplicamos frenado adicional si es necesario
         if (isBraking)
         {
-            Vector2 oppositeForce = -rb.velocity.normalized * brakingForce;
+            Vector2 oppositeForce = -rb.linearVelocity.normalized * brakingForce;
             rb.AddForce(oppositeForce, ForceMode2D.Force);
         }
 
         // Detectamos si se ha detenido por la fricción
-        if (rb.velocity.magnitude < 0.1f)
+        if (rb.linearVelocity.magnitude < 0.1f)
         {
             isMoving = false;
             isBraking = false;
             movement = Vector2.zero;
             currentVelocity = Vector2.zero;
-            rb.velocity = Vector2.zero; // Aseguramos que se detenga completamente
+            rb.linearVelocity = Vector2.zero; // Aseguramos que se detenga completamente
+            
+            // Centramos la burbuja en el tile más cercano
+            Vector2 tileCenter = GetNearestTileCenter();
+            transform.position = tileCenter;
         }
+    }
+
+    private Vector2 GetNearestTileCenter()
+    {
+        Vector2 currentPos = transform.position;
+        float x = Mathf.Floor(currentPos.x) + 0.5f;
+        float y = Mathf.Floor(currentPos.y) + 0.5f;
+        return new Vector2(x, y);
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.GetComponent<BoxCollider2D>() != null || other.GetComponent<TilemapCollider2D>() != null)
+        Map map = other.GetComponent<Map>();
+        if (map != null && map.IsWall())
         {
             bubbleSprite.color = Color.red;
             isMoving = false;
             movement = Vector2.zero;
-            isBraking = true; // Activamos el frenado
-            Debug.Log("Entrando en área y frenando");
+            isBraking = true;
+            Debug.Log("Entrando en pared y frenando");
         }
     }
 
     void OnTriggerExit2D(Collider2D other)
     {
-        if (other.GetComponent<BoxCollider2D>() != null || other.GetComponent<TilemapCollider2D>() != null)
+        Map map = other.GetComponent<Map>();
+        if (map != null && map.IsWall())
         {
             bubbleSprite.color = Color.white;
-            isBraking = false; // Desactivamos el frenado
-            Debug.Log("Saliendo del área"); // Para depuración
+            isBraking = false;
+            Debug.Log("Saliendo de la pared");
         }
     }
 }
