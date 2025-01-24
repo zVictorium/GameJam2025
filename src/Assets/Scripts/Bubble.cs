@@ -11,10 +11,14 @@ public class Bubble : MonoBehaviour
     private bool isInsideMap = false;
     private Vector2 targetPosition;
     private float stoppingLerpSpeed = 0.1f; // Nueva variable para controlar la suavidad de la parada
+    private float currentScale = 1f;
+    private float targetScale = 1f;
+    private float scalelinearVelocity = 0f;
+    private float scaleDuration = 0.25f; // Duración de la transición en segundos
 
     private void Start()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer = transform.Find("Visuals").GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = 0f;
         rb.interpolation = RigidbodyInterpolation2D.Interpolate;
@@ -36,12 +40,12 @@ public class Bubble : MonoBehaviour
             // Movimiento más suave al detenerse
             rb.MovePosition(Vector2.Lerp(rb.position, targetPosition, stoppingLerpSpeed));
             // Reducir gradualmente la velocidad
-            rb.velocity = Vector2.Lerp(rb.velocity, Vector2.zero, stoppingLerpSpeed);
+            rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, Vector2.zero, stoppingLerpSpeed);
         }
         else
         {
             // Asegurar que se detenga completamente
-            rb.velocity = Vector2.zero;
+            rb.linearVelocity = Vector2.zero;
             rb.position = targetPosition;
         }
     }
@@ -53,6 +57,7 @@ public class Bubble : MonoBehaviour
             CheckInput();
         }
         UpdateColor();
+        UpdateScale();
     }
 
     private void CheckInput()
@@ -83,6 +88,11 @@ public class Bubble : MonoBehaviour
                 Stop();
             }
         }
+        else if (other.TryGetComponent<Point>(out var point))
+        {
+            SetSize(size + 2);
+            point.Remove();
+        }
     }
 
     private void OnTriggerExit2D(Collider2D other)
@@ -96,6 +106,15 @@ public class Bubble : MonoBehaviour
     private void UpdateColor()
     {
         spriteRenderer.color = isInsideMap ? Color.red : Color.white;
+    }
+
+    private void UpdateScale()
+    {
+        if (currentScale != targetScale)
+        {
+            currentScale = Mathf.SmoothDamp(currentScale, targetScale, ref scalelinearVelocity, scaleDuration);
+            transform.localScale = new Vector3(currentScale, currentScale, 1f);
+        }
     }
 
     private void Stop()
@@ -138,7 +157,7 @@ public class Bubble : MonoBehaviour
     public void SetSize(int newSize)
     {
         size = newSize;
-        transform.localScale = new Vector3(newSize, newSize, 1f);
+        targetScale = newSize;
     }
 
     static int GetOffsetFromSize(int tileSize)
