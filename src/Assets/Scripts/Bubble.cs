@@ -25,7 +25,6 @@ public class Bubble : MonoBehaviour
         rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         targetPosition = rb.position;
-        SetSize(3);
     }
 
     private void FixedUpdate()
