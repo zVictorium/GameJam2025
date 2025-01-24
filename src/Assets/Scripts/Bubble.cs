@@ -36,12 +36,12 @@ public class Bubble : MonoBehaviour
             // Movimiento más suave al detenerse
             rb.MovePosition(Vector2.Lerp(rb.position, targetPosition, stoppingLerpSpeed));
             // Reducir gradualmente la velocidad
-            rb.velocity = Vector2.Lerp(rb.velocity, Vector2.zero, stoppingLerpSpeed);
+            rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, Vector2.zero, stoppingLerpSpeed);
         }
         else
         {
             // Asegurar que se detenga completamente
-            rb.velocity = Vector2.zero;
+            rb.linearVelocity = Vector2.zero;
             rb.position = targetPosition;
         }
     }
