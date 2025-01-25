@@ -22560,6 +22560,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3577828520174646231, guid: 52af6c0126d2cf84d8e7ab6ea65d948e, type: 3}
+      propertyPath: m_SortingOrder
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 5529843123359013687, guid: 52af6c0126d2cf84d8e7ab6ea65d948e, type: 3}
       propertyPath: m_Name
       value: Bubble
@@ -90541,7 +90545,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4439440573098118354, guid: 575a02314deb6854f954db8d8db0b9e8, type: 3}
       propertyPath: m_SortingOrder
-      value: 8
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 4439440573098118354, guid: 575a02314deb6854f954db8d8db0b9e8, type: 3}
       propertyPath: m_SortingLayerID
