@@ -41,6 +41,8 @@ public class Bubble : MonoBehaviour
     private bool isPlayingDeathAnimation;
     private Point[] allPoints;
     private Key[] allKeys;
+    private int totalPoints;
+    private int collectedPoints;
 
     private void Start()
     {
@@ -89,6 +91,8 @@ public class Bubble : MonoBehaviour
         initialPosition = rb.position;
         transform.localScale = Vector3.zero;
         SetSize(1);
+        totalPoints = allPoints.Length;
+        collectedPoints = 0;
     }
 
     private void FixedUpdate()
@@ -220,6 +224,13 @@ public class Bubble : MonoBehaviour
             return;
         }
 
+        // Verificar si colisiona con Medusa
+        if (other.TryGetComponent<Medusa>(out var medusa))
+        {
+            HandleWallCollision();
+            return;
+        }
+
         // Si es un TilemapCollider2D, tratarlo como pared
         if (other.GetComponent<TilemapCollider2D>() != null)
         {
@@ -242,6 +253,7 @@ public class Bubble : MonoBehaviour
         
         SetSize(size + 2);
         point.Hide();
+        collectedPoints++;
     }
 
     private void HandleMetaCollision(Collider2D other)
@@ -375,6 +387,7 @@ public class Bubble : MonoBehaviour
         hitWall = false;
         isMoving = false;
         direction = Vector2.zero;
+        collectedPoints = 0; // Reseteamos los puntos recolectados
     }
 
     private void ResetPosition()
@@ -410,5 +423,11 @@ public class Bubble : MonoBehaviour
         {
             meta.DeactivateMeta();
         }
+    }
+
+    // Nuevo método para obtener el conteo de puntos
+    public (int collected, int total) GetPointCount()
+    {
+        return (collectedPoints, totalPoints);
     }
 }
