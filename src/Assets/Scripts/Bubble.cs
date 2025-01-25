@@ -286,8 +286,8 @@ public class Bubble : MonoBehaviour
     {
         if (tileSize == 1) return 1;
         if (tileSize == 3) return 1;
-        if (tileSize == 5) return 1; 
-        if (tileSize == 7) return 1; 
+        if (tileSize == 5) return 2; 
+        if (tileSize == 7) return 3; 
         return 1; 
     }
 
