@@ -220,6 +220,13 @@ public class Bubble : MonoBehaviour
             return;
         }
 
+        // Verificar si colisiona con Medusa
+        if (other.TryGetComponent<Medusa>(out var medusa))
+        {
+            HandleWallCollision();
+            return;
+        }
+
         // Si es un TilemapCollider2D, tratarlo como pared
         if (other.GetComponent<TilemapCollider2D>() != null)
         {
