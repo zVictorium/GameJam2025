@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.Tilemaps;
 
 public class Bubble : MonoBehaviour
 {
@@ -8,8 +9,10 @@ public class Bubble : MonoBehaviour
     private const float SCALE_DURATION = 0.25f;
     private const float POSITION_THRESHOLD = 0.01f;
     private const float MOVEMENT_INTERPOLATION = 0.8f;
+    private const float TORBELLINO_LERP_SPEED = 10f;
 
-    [SerializeField] private Map platformTilemap;
+    // Reemplazamos platformTilemap por torbellinos
+    private Torbellino[] allTorbellinos;
 
     // Referencias a componentes
     private SpriteRenderer spriteRenderer;
@@ -22,6 +25,8 @@ public class Bubble : MonoBehaviour
     private Vector2 initialPosition;
     private bool isMoving;
     private bool hitWall;
+    private bool isMovingToTorbellino = false;
+    private Torbellino currentTorbellino;
 
     // Estado de tamaño
     private int size;
@@ -32,7 +37,6 @@ public class Bubble : MonoBehaviour
 
     // Estado del juego
     private bool isPlayingDeathAnimation;
-    private Map currentMap;
     private Point[] allPoints;
     private Key[] allKeys;
 
@@ -50,6 +54,7 @@ public class Bubble : MonoBehaviour
         animator = GetComponent<Animator>();
         allPoints = FindObjectsByType<Point>(FindObjectsSortMode.None);
         allKeys = FindObjectsByType<Key>(FindObjectsSortMode.None);
+        allTorbellinos = FindObjectsByType<Torbellino>(FindObjectsSortMode.None);
     }
 
     private void InitializePhysics()
@@ -65,7 +70,7 @@ public class Bubble : MonoBehaviour
         targetPosition = rb.position;
         initialPosition = rb.position;
         transform.localScale = Vector3.zero;
-        SetSize(3);
+        SetSize(1);
     }
 
     private void FixedUpdate()
@@ -76,6 +81,25 @@ public class Bubble : MonoBehaviour
 
     private void UpdateMovement()
     {
+        if (isMovingToTorbellino)
+        {
+            // Movimiento suave hacia el torbellino
+            Vector2 currentPos = transform.position;
+            Vector2 newPos = Vector2.Lerp(currentPos, targetPosition, Time.deltaTime * TORBELLINO_LERP_SPEED);
+            rb.MovePosition(newPos);
+            
+            // Si estamos lo suficientemente cerca, finalizamos el movimiento
+            if (Vector2.Distance(currentPos, targetPosition) < 0.01f)
+            {
+                isMovingToTorbellino = false;
+                transform.position = targetPosition;
+                rb.position = targetPosition;
+                currentTorbellino.DisableVisuals();
+                currentTorbellino = null;
+            }
+            return;
+        }
+
         if (isMoving)
         {
             MoveInDirection();
@@ -90,30 +114,10 @@ public class Bubble : MonoBehaviour
         }
     }
 
-    // Nueva función para alinear la posición al centro de la grid
-    private Vector2 AlignToGrid(Vector2 position)
-    {
-        float alignedX = Mathf.Floor(position.x) + 0.5f;
-        float alignedY = Mathf.Floor(position.y) + 0.5f;
-        return new Vector2(alignedX, alignedY);
-    }
-
     private void MoveInDirection()
     {
-        // Calculamos la nueva posición basada en la dirección y la velocidad
+        // Movemos la burbuja directamente sin alinear a la grid
         Vector2 newPos = rb.position + direction * SPEED * Time.fixedDeltaTime;
-        
-        // Alineamos la posición perpendicular al movimiento al centro de la grid
-        if (direction.x != 0)
-        {
-            newPos.y = AlignToGrid(newPos).y;
-        }
-        else if (direction.y != 0)
-        {
-            newPos.x = AlignToGrid(newPos).x;
-        }
-        
-        // Movemos la burbuja a la nueva posición alineada sin interpolar
         rb.MovePosition(newPos);
     }
 
@@ -131,7 +135,7 @@ public class Bubble : MonoBehaviour
     private void CompleteStop()
     {
         rb.linearVelocity = Vector2.zero;
-        rb.position = AlignToGrid(targetPosition);
+        rb.position = targetPosition;
         
         if (hitWall && !isShrinking && targetPosition == initialPosition)
         {
@@ -184,17 +188,21 @@ public class Bubble : MonoBehaviour
 
     private void HandleMapCollision(Collider2D other)
     {
-        if (!other.TryGetComponent<Map>(out var map)) return;
+        if (other.TryGetComponent<Torbellino>(out var torbellino))
+        {
+            targetPosition = torbellino.GetPosition();
+            isMoving = false;
+            isMovingToTorbellino = true;
+            currentTorbellino = torbellino;
+            direction = Vector2.zero;
+            rb.linearVelocity = Vector2.zero;
+            return;
+        }
 
-        currentMap = map;
-        
-        if (map.IsWall())
+        // Si es un TilemapCollider2D, tratarlo como pared
+        if (other.GetComponent<TilemapCollider2D>() != null)
         {
             HandleWallCollision();
-        }
-        else
-        {
-            Stop(true);
         }
     }
 
@@ -221,7 +229,7 @@ public class Bubble : MonoBehaviour
         
         if (meta.IsActive())
         {
-            SetSize(0);  // Hacemos que la burbuja desaparezca
+            SetSize(1);  // Hacemos que la burbuja desaparezca
             Stop(false); // Primero detenemos la bola
             StartCoroutine(LoadNextLevelWithDelay(meta));
         }
@@ -271,36 +279,19 @@ public class Bubble : MonoBehaviour
 
     private void Stop(bool removeStop = false)
     {
-        if (!isMoving) return;
+        if (!isMoving && !isMovingToTorbellino) return;
         
         isMoving = false;
+        isMovingToTorbellino = false;
         
         if (!hitWall)
         {
-            // Obtenemos la posición actual alineada a la grid
-            Vector2 currentAlignedPos = AlignToGrid(rb.position);
-            
-            // Calculamos la siguiente posición en la dirección del movimiento
-            int gridSteps = GetOffsetFromSize(size);
-            Vector2 targetOffset = direction.normalized * gridSteps;
-            
-            // Establecemos la posición objetivo alineada a la grid
-            targetPosition = AlignToGrid(currentAlignedPos + targetOffset);
-
-            // Movemos la burbuja directamente a la posición objetivo
-            rb.MovePosition(targetPosition);
-
-            if (removeStop && currentMap != null)
-            {
-                currentMap.DeleteTile(targetPosition);
-            }
+            rb.position = targetPosition;
+            transform.position = targetPosition;
         }
         
         direction = Vector2.zero;
-
-        // Alineamos la posición final para asegurar precisión
-        rb.position = AlignToGrid(rb.position);
-        transform.position = AlignToGrid(transform.position);
+        rb.linearVelocity = Vector2.zero;
     }
 
     public void SetSize(int newSize)
@@ -356,18 +347,13 @@ public class Bubble : MonoBehaviour
         hitWall = false;
         isMoving = false;
         direction = Vector2.zero;
-        currentMap = null;
     }
 
     private void ResetPosition()
     {
-        // Alineamos con el centro de la tile
-        Vector2 alignedPosition = AlignToGrid(initialPosition);
-        
-        rb.position = alignedPosition;
-        transform.position = alignedPosition;
-        targetPosition = alignedPosition;
-        initialPosition = alignedPosition;
+        rb.position = initialPosition;
+        transform.position = initialPosition;
+        targetPosition = initialPosition;
         
         rb.linearVelocity = Vector2.zero;
         rb.angularVelocity = 0f;
@@ -375,9 +361,9 @@ public class Bubble : MonoBehaviour
 
     private void ResetLevel()
     {
-        if (platformTilemap != null)
+        foreach (var torbellino in allTorbellinos)
         {
-            platformTilemap.ResetTilemap();
+            torbellino.EnableVisuals();
         }
 
         foreach (Point point in allPoints)

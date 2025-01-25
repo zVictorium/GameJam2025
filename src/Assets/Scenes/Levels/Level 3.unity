@@ -520,7 +520,7 @@ Tilemap:
       - {fileID: 2082854042, guid: a0c4dbf00a0d872468ad74dbb9948a5c, type: 3}
       - {fileID: 201640925, guid: a0c4dbf00a0d872468ad74dbb9948a5c, type: 3}
       - {fileID: -1649397637, guid: a0c4dbf00a0d872468ad74dbb9948a5c, type: 3}
-      m_AnimationSpeed: 5
+      m_AnimationSpeed: 5.0000005
       m_AnimationTimeOffset: 0
       m_Flags: 0
   - first: {x: 19, y: 3, z: 0}
@@ -24250,6 +24250,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3495882486558191943, guid: 52af6c0126d2cf84d8e7ab6ea65d948e, type: 3}
+      propertyPath: m_Mass
+      value: 0.50265485
+      objectReference: {fileID: 0}
     - target: {fileID: 5085685488532156958, guid: 52af6c0126d2cf84d8e7ab6ea65d948e, type: 3}
       propertyPath: m_Radius
       value: 0.4
@@ -47932,7 +47936,7 @@ TilemapCollider2D:
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 370e2db86d04bc84091a78e6547b2f64, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -47959,7 +47963,7 @@ TilemapCollider2D:
   m_Offset: {x: 0, y: 0}
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0
-  m_UseDelaunayMesh: 0
+  m_UseDelaunayMesh: 1
 --- !u!1 &615487730
 GameObject:
   m_ObjectHideFlags: 0
