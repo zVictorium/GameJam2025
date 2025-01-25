@@ -3,7 +3,7 @@ using UnityEngine;
 public class Bubble : MonoBehaviour
 {
     private const float SPEED = 15.0f;
-    private const float STOPPING_LERP_SPEED = 0.75f;
+    private const float STOPPING_LERP_SPEED = 0.5f;
     private const float SCALE_DURATION = 0.25f;
     private const float POSITION_THRESHOLD = 0.01f;
     private const float MOVEMENT_INTERPOLATION = 0.8f;
@@ -250,7 +250,7 @@ public class Bubble : MonoBehaviour
     static int GetOffsetFromSize(int tileSize)
     {
         if (tileSize == 1) return 1;
-        if (tileSize == 3) return 2;
+        if (tileSize == 3) return 1;
         if (tileSize == 5) return 3; 
         if (tileSize == 7) return 4; 
         return 5; 
