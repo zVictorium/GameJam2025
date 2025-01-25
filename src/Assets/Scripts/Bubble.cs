@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class Bubble : MonoBehaviour
 {
@@ -196,12 +197,19 @@ public class Bubble : MonoBehaviour
         
         if (meta.IsActive())
         {
-            meta.LoadNextLevel();
+            Stop(false); // Primero detenemos la bola
+            StartCoroutine(LoadNextLevelWithDelay(meta));
         }
         else
         {
-            HandleWallCollision();
+            HandleWallCollision(); // Si no está activa, se comporta como pared
         }
+    }
+    
+    private IEnumerator LoadNextLevelWithDelay(Meta meta)
+    {
+        yield return new WaitForSeconds(0.5f); // Pequeño delay antes de cambiar de nivel
+        meta.LoadNextLevel();
     }
 
     private void UpdateScale()

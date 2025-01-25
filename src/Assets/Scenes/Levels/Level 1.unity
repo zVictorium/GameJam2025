@@ -52995,14 +52995,6 @@ PrefabInstance:
       propertyPath: platformTilemap
       value: 
       objectReference: {fileID: 46378058}
-    - target: {fileID: 7895234397474506893, guid: 52af6c0126d2cf84d8e7ab6ea65d948e, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 7895234397474506893, guid: 52af6c0126d2cf84d8e7ab6ea65d948e, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1.25
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -79636,10 +79628,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4274106117164286315, guid: 4e4da82762bcd0a4bafa17b402902938, type: 3}
-      propertyPath: activatedSprite
-      value: 
-      objectReference: {fileID: -2469204465592042943, guid: 6e071d10accf6aa44b0ad1692787e6f4, type: 3}
     - target: {fileID: 8317991304690043498, guid: 4e4da82762bcd0a4bafa17b402902938, type: 3}
       propertyPath: m_Name
       value: Meta
