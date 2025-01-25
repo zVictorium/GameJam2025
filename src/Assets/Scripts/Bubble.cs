@@ -5,6 +5,7 @@ using UnityEngine.Tilemaps;
 public class Bubble : MonoBehaviour
 {
     [SerializeField] private GameObject transitionCanvas; // Añadir esta línea al inicio de la clase
+    private Vientos vientosEffect; // Eliminar SerializeField
 
     private const float SPEED = 15.0f;
     private const float STOPPING_LERP_SPEED = 0.5f;
@@ -70,6 +71,13 @@ public class Bubble : MonoBehaviour
             Debug.LogError("No se pudo encontrar el SpriteRenderer en Bubble ni en sus hijos");
         }
         
+        // Buscar el componente Vientos en la escena
+        vientosEffect = FindFirstObjectByType<Vientos>();
+        if (vientosEffect == null)
+        {
+            Debug.LogError("No se encontró el componente Vientos en la escena");
+        }
+        
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         allPoints = FindObjectsByType<Point>(FindObjectsSortMode.None);
@@ -105,6 +113,7 @@ public class Bubble : MonoBehaviour
     {
         if (isMovingToTorbellino)
         {
+            vientosEffect.SetVisibility(true);
             // Movimiento suave hacia el torbellino o meta
             Vector2 currentPos = transform.position;
             Vector2 newPos = Vector2.Lerp(currentPos, targetPosition, Time.deltaTime * TORBELLINO_LERP_SPEED);
@@ -127,15 +136,23 @@ public class Bubble : MonoBehaviour
 
         if (isMoving)
         {
+            vientosEffect.SetVisibility(true);
+            // Calcular el ángulo basado en la dirección
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
+            vientosEffect.RotateObject(angle - vientosEffect.transform.eulerAngles.z);
             MoveInDirection();
-        }
-        else if (ShouldSmoothStop())
-        {
-            SmoothStop();
         }
         else
         {
-            CompleteStop();
+            vientosEffect.SetVisibility(false);
+            if (ShouldSmoothStop())
+            {
+                SmoothStop();
+            }
+            else
+            {
+                CompleteStop();
+            }
         }
     }
 
@@ -334,6 +351,7 @@ public class Bubble : MonoBehaviour
         
         isMoving = false;
         isMovingToTorbellino = false;
+        vientosEffect.SetVisibility(false); // Ocultar vientos al detenerse
         
         if (!hitWall)
         {

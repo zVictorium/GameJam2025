@@ -1,28 +1,24 @@
 using UnityEngine;
-using TMPro; // Asegúrate de importar TextMeshPro
+using TMPro;
 
 public class LevelFinder : MonoBehaviour
 {
-    public TMP_Text levelText; // Referencia al componente TextMeshPro
+    private TMP_Text levelText;
 
     void Start()
     {
+        levelText = GetComponent<TMP_Text>();
+        if (levelText == null)
+        {
+            Debug.LogError("El componente TMP_Text debe estar en el mismo objeto que LevelFinder");
+            return;
+        }
         UpdateLevelText();
     }
 
     void UpdateLevelText()
     {
-        // Obtén el índice de la escena activa
         int currentLevel = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
-
-        // Actualiza el texto del TMP_Text con el nivel
-        if (levelText != null)
-        {
-            levelText.text = "Level: " + (currentLevel - 1);
-        }
-        else
-        {
-            Debug.LogWarning("No se ha asignado el TMP_Text al script LevelFinder.");
-        }
+        levelText.text = "Level: " + (currentLevel - 1);
     }
 }
