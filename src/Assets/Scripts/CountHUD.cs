@@ -4,7 +4,7 @@ using TMPro;
 public class CountHUD : MonoBehaviour
 {
     [SerializeField] private Bubble bubble;
-    [SerializeField] private TextMeshProUGUI counterText;
+    private TextMeshProUGUI counterText;
 
     private int lastCollectedPoints = -1;
     private int lastTotalPoints = -1;
@@ -17,9 +17,11 @@ public class CountHUD : MonoBehaviour
             return;
         }
         
+        counterText = GetComponent<TextMeshProUGUI>();
         if (counterText == null)
         {
-            counterText = GetComponent<TextMeshProUGUI>();
+            Debug.LogError("TextMeshProUGUI component not found on the same object as CountHUD!");
+            return;
         }
 
         UpdateCounterText();
