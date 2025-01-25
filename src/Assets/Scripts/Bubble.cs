@@ -154,6 +154,7 @@ public class Bubble : MonoBehaviour
     {
         HandleMapCollision(other);
         HandlePointCollision(other);
+        HandleMetaCollision(other);
     }
 
     private void HandleMapCollision(Collider2D other)
@@ -187,6 +188,20 @@ public class Bubble : MonoBehaviour
         
         SetSize(size + 2);
         point.Hide();
+    }
+
+    private void HandleMetaCollision(Collider2D other)
+    {
+        if (!other.TryGetComponent<Meta>(out var meta)) return;
+        
+        if (meta.IsActive())
+        {
+            meta.LoadNextLevel();
+        }
+        else
+        {
+            HandleWallCollision();
+        }
     }
 
     private void UpdateScale()

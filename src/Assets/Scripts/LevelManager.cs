@@ -9,7 +9,7 @@ public class LevelSelector : MonoBehaviour {
         // Cargar el nivel desbloqueado más alto
         int levelReached = PlayerPrefs.GetInt("LevelReached", 1); // Por defecto, solo el nivel 1 está desbloqueado
 
-        for (int i = 0; i < levelButtons.Length; i++){
+        for (int i = 0; i < levelButtons.Length; i++) {
             if (i + 1 > levelReached) {
                 levelButtons[i].interactable = false; // Bloquea los niveles aún no desbloqueados
             }
