@@ -2,32 +2,33 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 public class PauseMenu : MonoBehaviour
 {
-    [SerializeField] private GameObject PauseButton;
     [SerializeField] private GameObject PauseMenuUI;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private bool isPaused = false;
-
+    void Start() {
+        Time.timeScale = 1f; // El tiempo corre normalmente al iniciar
+        isPaused = false; // Asegúrate de que no esté pausado al principio
+        PauseMenuUI.SetActive(false);
+    }
     void Update() {
         if(Input.GetKeyDown(KeyCode.Escape)) {
             if(isPaused) {
-                pause();
+                resume();
             }
             else {
-                resume();
+                pause();
             }
         }
     }
     public void pause() {
         isPaused = true;
         Time.timeScale = 0f; // pausa el juego
-        PauseButton.SetActive(false);
         PauseMenuUI.SetActive(true);
     }
 
     public void resume() {
         isPaused = false;
         Time.timeScale = 1f; // reanuda el juego
-        PauseButton.SetActive(true);
         PauseMenuUI.SetActive(false);
     }
 
@@ -39,7 +40,7 @@ public class PauseMenu : MonoBehaviour
 
     public void loadMenu() {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("MainMenu");
     }
 
 }   

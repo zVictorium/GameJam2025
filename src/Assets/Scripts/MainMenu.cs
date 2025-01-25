@@ -10,6 +10,10 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); // Carga la siguiente escena
     }
 
+    public void LevelSelector() {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); // Carga la siguiente escena
+    }
+
     public void ExitGame() {
         Debug.Log("Exit...");
         Application.Quit(); // cierra aplicacion

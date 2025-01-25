@@ -241,7 +241,12 @@ public class Bubble : MonoBehaviour
     
     private IEnumerator LoadNextLevelWithDelay(Meta meta)
     {
-        yield return new WaitForSeconds(0.5f); // Pequeño delay antes de cambiar de nivel
+        GameObject TheGameController;
+        Animator transition;
+        TheGameController=GameObject.Find("Canva");
+        transition = TheGameController.GetComponent<Animator>();
+        transition.SetTrigger("Start");
+        yield return new WaitForSeconds(0.7f);
         meta.LoadNextLevel();
     }
 
