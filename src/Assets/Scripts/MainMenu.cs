@@ -5,19 +5,12 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    [SerializeField] private GameObject MainMenuUI;
-    [SerializeField] private GameObject SettingsMenuUI;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    public void Start() {
-        MainMenuUI.SetActive(true);
-        SettingsMenuUI.SetActive(false);
+    public void PlayGame() {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); // Carga la siguiente escena
     }
 
-    public void OpenSettings() {
-        MainMenuUI.SetActive(false);
-        SettingsMenuUI.SetActive(true);
-    }
-    public void PlayGame() {
+    public void LevelSelector() {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); // Carga la siguiente escena
     }
 
