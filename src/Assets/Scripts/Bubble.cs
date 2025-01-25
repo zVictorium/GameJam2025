@@ -4,6 +4,8 @@ using UnityEngine.Tilemaps;
 
 public class Bubble : MonoBehaviour
 {
+    [SerializeField] private GameObject transitionCanvas; // Añadir esta línea al inicio de la clase
+
     private const float SPEED = 15.0f;
     private const float STOPPING_LERP_SPEED = 0.5f;
     private const float SCALE_DURATION = 0.25f;
@@ -49,7 +51,23 @@ public class Bubble : MonoBehaviour
 
     private void InitializeComponents()
     {
-        spriteRenderer = transform.Find("Visuals").GetComponent<SpriteRenderer>();
+        // Intentar obtener el SpriteRenderer del objeto actual si no se encuentra en Visuals
+        var visualsTransform = transform.Find("Visuals");
+        if (visualsTransform != null)
+        {
+            spriteRenderer = visualsTransform.GetComponent<SpriteRenderer>();
+        }
+        
+        if (spriteRenderer == null)
+        {
+            spriteRenderer = GetComponent<SpriteRenderer>();
+        }
+        
+        if (spriteRenderer == null)
+        {
+            Debug.LogError("No se pudo encontrar el SpriteRenderer en Bubble ni en sus hijos");
+        }
+        
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         allPoints = FindObjectsByType<Point>(FindObjectsSortMode.None);
@@ -257,12 +275,28 @@ public class Bubble : MonoBehaviour
     
     private IEnumerator LoadNextLevelWithDelay(Meta meta)
     {
-        GameObject TheGameController;
-        Animator transition;
-        TheGameController=GameObject.Find("Canva");
-        transition = TheGameController.GetComponent<Animator>();
-        transition.SetTrigger("Start");
-        yield return new WaitForSeconds(0.7f);
+        // Intentar obtener el canvas si no fue asignado
+        if (transitionCanvas == null)
+        {
+            transitionCanvas = GameObject.Find("Canva");
+        }
+
+        // Si encontramos el canvas, reproducir la animación
+        if (transitionCanvas != null)
+        {
+            Animator transition = transitionCanvas.GetComponent<Animator>();
+            if (transition != null)
+            {
+                transition.SetTrigger("Start");
+                yield return new WaitForSeconds(0.7f);
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Canvas de transición no encontrado - saltando animación");
+            yield return new WaitForSeconds(0.1f);
+        }
+        
         meta.LoadNextLevel();
     }
 
