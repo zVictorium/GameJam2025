@@ -16,8 +16,14 @@ public class LevelSelector : MonoBehaviour {
         }
     }
 
-    public void SelectLevel(string levelName) {
-        SceneManager.LoadScene(levelName); // Carga la escena del nivel seleccionado
+    void Update() {
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            SceneManager.LoadScene("MainMenu");
+        }
+    }
+
+    public void SelectLevel(int levelIndex) {
+        SceneManager.LoadScene(levelIndex + 1); // Carga la escena del nivel seleccionado (escena 2 = nivel 1)
     }
     void CompleteLevel() {
         int currentLevel = SceneManager.GetActiveScene().buildIndex;
