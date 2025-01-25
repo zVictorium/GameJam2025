@@ -132526,6 +132526,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Alga
       objectReference: {fileID: 0}
+    - target: {fileID: 788247971674132120, guid: fdc9130a38fadc0449a485609516ca14, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5007273670501225766, guid: fdc9130a38fadc0449a485609516ca14, type: 3}
       propertyPath: m_Color.b
       value: 0.7056604
