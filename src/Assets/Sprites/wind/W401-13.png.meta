@@ -1,10 +1,16 @@
 fileFormatVersion: 2
-guid: 6ff17d72d00d4b849865eff4a94dd8f3
+guid: 8c1f6f703e1d2174f92927c2553f4212
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7019532739285589059
-    second: underwater-fantasy-preview_0
+      213: -8904459987546633836
+    second: W401-13_0
+  - first:
+      213: -5536194356905481983
+    second: W401-13_1
+  - first:
+      213: 2680612143106454247
+    second: W401-13_2
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,9 +52,9 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
@@ -97,19 +103,6 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
-    buildTarget: WindowsStoreApps
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
     buildTarget: WebGL
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -126,13 +119,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: underwater-fantasy-preview_0
+      name: W401-13_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 768
-        height: 192
+        x: 287
+        y: 271
+        width: 114
+        height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +134,52 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 34c9756d5d36a6160800000000000000
-      internalID: 7019532739285589059
+      spriteID: 4998a95b1d00d6480800000000000000
+      internalID: -8904459987546633836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: W401-13_1
+      rect:
+        serializedVersion: 2
+        x: 255
+        y: 223
+        width: 98
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 109602d709c7b23b0800000000000000
+      internalID: -5536194356905481983
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: W401-13_2
+      rect:
+        serializedVersion: 2
+        x: 367
+        y: 175
+        width: 50
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e2757aaa82733520800000000000000
+      internalID: 2680612143106454247
       vertices: []
       indices: 
       edges: []
@@ -151,7 +188,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +198,9 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      underwater-fantasy-preview_0: 7019532739285589059
+      W401-13_0: -8904459987546633836
+      W401-13_1: -5536194356905481983
+      W401-13_2: 2680612143106454247
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
