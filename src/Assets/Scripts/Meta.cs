@@ -9,12 +9,18 @@ public class Meta : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Collider2D _collider2D;
     private bool isActivated = false;
+    private Sprite initialSprite; // Nueva variable para guardar el sprite inicial
     
     private void Start()
     {
         points = FindObjectsByType<Point>(FindObjectsSortMode.None);
         spriteRenderer = GetComponent<SpriteRenderer>();
         _collider2D = GetComponent<Collider2D>();
+        
+        if (spriteRenderer != null)
+        {
+            initialSprite = spriteRenderer.sprite; // Guardamos el sprite inicial
+        }
         
         if (spriteRenderer == null)
         {
@@ -70,5 +76,18 @@ public class Meta : MonoBehaviour
     public void LoadNextLevel()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    }
+
+    public void DeactivateMeta()
+    {
+        isActivated = false;
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.sprite = initialSprite; // Usamos el sprite inicial
+        }
+        if (_collider2D != null)
+        {
+            _collider2D.isTrigger = false;
+        }
     }
 }

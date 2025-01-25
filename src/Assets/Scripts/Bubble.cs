@@ -375,5 +375,12 @@ public class Bubble : MonoBehaviour
         {
             key.Show();
         }
+
+        // Encontrar y desactivar la meta
+        Meta meta = FindFirstObjectByType<Meta>();
+        if (meta != null)
+        {
+            meta.DeactivateMeta();
+        }
     }
 }
