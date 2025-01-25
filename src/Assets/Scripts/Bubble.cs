@@ -1,85 +1,138 @@
-using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 
 public class Bubble : MonoBehaviour
 {
-    private Vector2 direction = Vector2.zero;
-    private bool isMoving = false;
-    private float speed = 7.5f; // Reducida de 5f a 3f
-    private int size = 0; // Cambiado de 1 a 0
+    private const float SPEED = 15.0f;
+    private const float STOPPING_LERP_SPEED = 0.5f;
+    private const float SCALE_DURATION = 0.25f;
+    private const float POSITION_THRESHOLD = 0.01f;
+    private const float MOVEMENT_INTERPOLATION = 0.8f;
+
+    [SerializeField] private Map platformTilemap;
+
+    // Referencias a componentes
     private SpriteRenderer spriteRenderer;
     private Rigidbody2D rb;
-    private bool isInsideMap = false;
-    private Vector2 targetPosition;
-    private float stoppingLerpSpeed = 0.1f; // Nueva variable para controlar la suavidad de la parada
-    private float currentScale = 0f; // Cambiado de 1f a 0f
-    private float targetScale = 0f;  // Cambiado de 1f a 0f
-    private float scalelinearVelocity = 0f;
-    private float scaleDuration = 0.25f; // Duración de la transición en segundos
-    private Vector2 initialPosition;
-    private bool hitWall = false;
-    private bool isShrinking = false;
     private Animator animator;
-    private bool isPlayingDeathAnimation = false;
+
+    // Estado de movimiento
+    private Vector2 direction = Vector2.zero;
+    private Vector2 targetPosition;
+    private Vector2 initialPosition;
+    private bool isMoving;
+    private bool hitWall;
+
+    // Estado de tamaño
+    private int size;
+    private float currentScale;
+    private float targetScale;
+    private float scaleVelocity;
+    private bool isShrinking;
+
+    // Estado del juego
+    private bool isPlayingDeathAnimation;
+    private Map currentMap;
+    private Point[] allPoints;
 
     private void Start()
     {
+        InitializeComponents();
+        InitializePhysics();
+        InitializeState();
+    }
+
+    private void InitializeComponents()
+    {
         spriteRenderer = transform.Find("Visuals").GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+        allPoints = FindObjectsByType<Point>(FindObjectsSortMode.None);
+    }
+
+    private void InitializePhysics()
+    {
         rb.gravityScale = 0f;
         rb.interpolation = RigidbodyInterpolation2D.Interpolate;
         rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+    }
+
+    private void InitializeState()
+    {
         targetPosition = rb.position;
         initialPosition = rb.position;
-        transform.localScale = Vector3.zero; // Asegurar que empiece con escala 0
-        SetSize(1); // Añadido al final de Start
-        animator = GetComponent<Animator>();
+        transform.localScale = Vector3.zero;
+        SetSize(1);
     }
 
     private void FixedUpdate()
     {
-        if (isPlayingDeathAnimation) return; // No mover mientras la animación de muerte está activa
+        if (isPlayingDeathAnimation) return;
+        UpdateMovement();
+    }
 
+    private void UpdateMovement()
+    {
         if (isMoving)
         {
-            Vector2 newPos = rb.position + direction * speed * Time.fixedDeltaTime;
-            rb.MovePosition(Vector2.Lerp(rb.position, newPos, 0.8f));
+            MoveInDirection();
         }
-        else if (Vector2.Distance(rb.position, targetPosition) > 0.01f)
+        else if (ShouldSmoothStop())
         {
-            // Movimiento más suave al detenerse
-            rb.MovePosition(Vector2.Lerp(rb.position, targetPosition, stoppingLerpSpeed));
-            // Reducir gradualmente la velocidad
-            rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, Vector2.zero, stoppingLerpSpeed);
+            SmoothStop();
         }
         else
         {
-            // Asegurar que se detenga completamente
-            rb.linearVelocity = Vector2.zero;
-            rb.position = targetPosition;
-            
-            // Solo restaurar tamaño si no está encogiendo y está en la posición inicial
-            if (hitWall && !isShrinking && targetPosition == initialPosition)
-            {
-                hitWall = false;
-                SetSize(1);
-            }
+            CompleteStop();
+        }
+    }
+
+    private void MoveInDirection()
+    {
+        Vector2 newPos = rb.position + direction * SPEED * Time.fixedDeltaTime;
+        rb.MovePosition(Vector2.Lerp(rb.position, newPos, MOVEMENT_INTERPOLATION));
+    }
+
+    private bool ShouldSmoothStop()
+    {
+        return Vector2.Distance(rb.position, targetPosition) > POSITION_THRESHOLD;
+    }
+
+    private void SmoothStop()
+    {
+        rb.MovePosition(Vector2.Lerp(rb.position, targetPosition, STOPPING_LERP_SPEED));
+        rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, Vector2.zero, STOPPING_LERP_SPEED);
+    }
+
+    private void CompleteStop()
+    {
+        rb.linearVelocity = Vector2.zero;
+        rb.position = targetPosition;
+        
+        if (hitWall && !isShrinking && targetPosition == initialPosition)
+        {
+            hitWall = false;
+            SetSize(1);
         }
     }
 
     private void Update()
     {
-        if (!isMoving)
-        {
-            CheckInput();
-        }
-        UpdateColor();
+        if (!isMoving) CheckInput();
         UpdateScale();
+    }
+
+    private bool IsCompletelyStill()
+    {
+        return !isMoving && 
+               Vector2.Distance(rb.position, targetPosition) < POSITION_THRESHOLD && 
+               rb.linearVelocity.magnitude == 0.0f;
     }
 
     private void CheckInput()
     {
+        if (!IsCompletelyStill()) return;
+        
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
             SetDirection(Vector2.up);
         else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
@@ -92,70 +145,70 @@ public class Bubble : MonoBehaviour
 
     private void SetDirection(Vector2 newDirection)
     {
-        if (isShrinking || hitWall) return; // No permitir movimiento mientras se encoge
+        if (isShrinking || hitWall) return;
         direction = newDirection;
         isMoving = true;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.TryGetComponent<Map>(out var map))
-        {
-            isInsideMap = true;
-            if (map.IsWall())
-            {
-                hitWall = true;
-                SetSize(0);
-                Stop();
-                animator.SetTrigger("Death");
-                isPlayingDeathAnimation = true;
-            }
-            else if (!map.IsWall())
-            {
-                Stop();
-            }
-        }
-        else if (other.TryGetComponent<Point>(out var point))
-        {
-            SetSize(size + 2);
-            point.Remove();
-        }
+        HandleMapCollision(other);
+        HandlePointCollision(other);
     }
 
-    private void OnTriggerExit2D(Collider2D other)
+    private void HandleMapCollision(Collider2D other)
     {
-        if (other.TryGetComponent<Map>(out var map))
-        {
-            isInsideMap = false;
-        }
-    }
+        if (!other.TryGetComponent<Map>(out var map)) return;
 
-    private void UpdateColor()
-    {
-        if (hitWall)
-            spriteRenderer.color = Color.blue;
+        currentMap = map;
+        
+        if (map.IsWall())
+        {
+            HandleWallCollision();
+        }
         else
-            spriteRenderer.color = isInsideMap ? Color.red : Color.white;
+        {
+            Stop(true);
+        }
+    }
+
+    private void HandleWallCollision()
+    {
+        hitWall = true;
+        Stop();
+        animator.SetTrigger("Death");
+        isPlayingDeathAnimation = true;
+    }
+
+    private void HandlePointCollision(Collider2D other)
+    {
+        if (!other.TryGetComponent<Point>(out var point)) return;
+        if (isPlayingDeathAnimation) return; // Solo esta verificación es necesaria
+        
+        SetSize(size + 2);
+        point.Hide();
     }
 
     private void UpdateScale()
     {
         if (currentScale != targetScale)
         {
-            currentScale = Mathf.SmoothDamp(currentScale, targetScale, ref scalelinearVelocity, scaleDuration);
+            currentScale = Mathf.SmoothDamp(currentScale, targetScale, ref scaleVelocity, SCALE_DURATION);
             transform.localScale = new Vector3(currentScale, currentScale, 1f);
             
-            // Si estamos encogiendo y llegamos casi a 0
+            Debug.Log($"UpdateScale -> size:{size}, currentScale:{currentScale}, targetScale:{targetScale}, isShrinking:{isShrinking}");
+            
             if (isShrinking && currentScale < 0.01f)
             {
                 currentScale = 0f;
                 transform.localScale = Vector3.zero;
                 isShrinking = false;
+                Debug.Log("Shrinking complete!");
             }
         }
     }
 
-    private void Stop()
+    private void Stop(bool removeStop = false)
     {
         if (!isMoving) return;
         
@@ -163,7 +216,6 @@ public class Bubble : MonoBehaviour
         
         if (!hitWall)
         {
-            // Calcular la posición objetivo redondeada solo si no golpeó una pared
             float roundedX = Mathf.Round(transform.position.x - 0.5f) + 0.5f;
             float roundedY = Mathf.Round(transform.position.y - 0.5f) + 0.5f;
 
@@ -173,6 +225,11 @@ public class Bubble : MonoBehaviour
             else if (direction.y < 0) roundedY -= GetOffsetFromSize(size);
 
             targetPosition = new Vector2(roundedX, roundedY);
+
+            if (removeStop && currentMap != null)
+            {
+                currentMap.DeleteTile(targetPosition);
+            }
         }
         
         direction = Vector2.zero;
@@ -180,29 +237,91 @@ public class Bubble : MonoBehaviour
 
     public void SetSize(int newSize)
     {
+        Debug.Log($"SetSize called with newSize:{newSize} (previous size:{size})");
         size = newSize;
         targetScale = newSize;
         if (newSize == 0)
         {
             isShrinking = true;
         }
+        Debug.Log($"After SetSize -> size:{size}, targetScale:{targetScale}, isShrinking:{isShrinking}");
     }
 
     static int GetOffsetFromSize(int tileSize)
     {
         if (tileSize == 1) return 1;
-        if (tileSize == 3) return 2;
+        if (tileSize == 3) return 1;
         if (tileSize == 5) return 3; 
         if (tileSize == 7) return 4; 
         return 5; 
     }
 
-    // Método que será llamado por el Animation Event al final de la animación de muerte
     public void OnDeathAnimationComplete()
     {
+        Debug.Log("OnDeathAnimationComplete - Before reset -> " +
+                  $"size:{size}, currentScale:{currentScale}, targetScale:{targetScale}");
+        
+        // Primero reseteamos el tamaño
+        size = 0;
+        currentScale = 0f;
+        targetScale = 0f;
+        transform.localScale = Vector3.zero;
+        isShrinking = false;
+
+        Debug.Log("After size reset -> " +
+                  $"size:{size}, currentScale:{currentScale}, targetScale:{targetScale}");
+
+        // Luego la posición
+        ResetPosition();
+        
+        // Después el estado del juego
+        ResetGameState();
+        
+        // Por último el nivel y establecemos el tamaño inicial
+        ResetLevel();
+        SetSize(1);
+        
+        Debug.Log("OnDeathAnimationComplete - Final state -> " +
+                  $"size:{size}, currentScale:{currentScale}, targetScale:{targetScale}");
+    }
+
+    private void ResetGameState()
+    {
         isPlayingDeathAnimation = false;
-        targetPosition = initialPosition;
-        rb.position = initialPosition;
-        transform.position = initialPosition;
+        hitWall = false;
+        isMoving = false;
+        direction = Vector2.zero;
+        currentMap = null;
+    }
+
+    private void ResetPosition()
+    {
+        // Aseguramos que todas las posiciones están correctamente alineadas a la grilla
+        float roundedX = Mathf.Round(initialPosition.x - 0.5f) + 0.5f;
+        float roundedY = Mathf.Round(initialPosition.y - 0.5f) + 0.5f;
+        Vector2 alignedPosition = new Vector2(roundedX, roundedY);
+        
+        rb.position = alignedPosition;
+        transform.position = alignedPosition;
+        targetPosition = alignedPosition;
+        initialPosition = alignedPosition;
+        
+        // Detenemos cualquier velocidad residual
+        rb.linearVelocity = Vector2.zero;
+        rb.angularVelocity = 0f;
+        rb.linearVelocity = Vector2.zero;
+    }
+
+    private void ResetLevel()
+    {
+        if (platformTilemap != null)
+        {
+            platformTilemap.ResetTilemap();
+        }
+
+        foreach (Point point in allPoints)
+        {
+            point.Show();
+        }
     }
 }
