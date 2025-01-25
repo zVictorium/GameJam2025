@@ -34,6 +34,7 @@ public class Bubble : MonoBehaviour
     private bool isPlayingDeathAnimation;
     private Map currentMap;
     private Point[] allPoints;
+    private Key[] allKeys;
 
     private void Start()
     {
@@ -48,6 +49,7 @@ public class Bubble : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         allPoints = FindObjectsByType<Point>(FindObjectsSortMode.None);
+        allKeys = FindObjectsByType<Key>(FindObjectsSortMode.None);
     }
 
     private void InitializePhysics()
@@ -156,6 +158,7 @@ public class Bubble : MonoBehaviour
         HandleMapCollision(other);
         HandlePointCollision(other);
         HandleMetaCollision(other);
+        HandleKeyCollision(other);
     }
 
     private void HandleMapCollision(Collider2D other)
@@ -197,6 +200,7 @@ public class Bubble : MonoBehaviour
         
         if (meta.IsActive())
         {
+            SetSize(0);  // Hacemos que la burbuja desaparezca
             Stop(false); // Primero detenemos la bola
             StartCoroutine(LoadNextLevelWithDelay(meta));
         }
@@ -204,6 +208,14 @@ public class Bubble : MonoBehaviour
         {
             HandleWallCollision(); // Si no está activa, se comporta como pared
         }
+    }
+    
+    private void HandleKeyCollision(Collider2D other)
+    {
+        if (!other.TryGetComponent<Key>(out var key)) return;
+        if (isPlayingDeathAnimation) return;
+        
+        key.Hide();
     }
     
     private IEnumerator LoadNextLevelWithDelay(Meta meta)
@@ -274,9 +286,9 @@ public class Bubble : MonoBehaviour
     {
         if (tileSize == 1) return 1;
         if (tileSize == 3) return 1;
-        if (tileSize == 5) return 3; 
-        if (tileSize == 7) return 4; 
-        return 5; 
+        if (tileSize == 5) return 1; 
+        if (tileSize == 7) return 1; 
+        return 1; 
     }
 
     public void OnDeathAnimationComplete()
@@ -345,6 +357,11 @@ public class Bubble : MonoBehaviour
         foreach (Point point in allPoints)
         {
             point.Show();
+        }
+
+        foreach (Key key in allKeys)
+        {
+            key.Show();
         }
     }
 }
