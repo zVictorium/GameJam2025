@@ -65,7 +65,7 @@ public class Bubble : MonoBehaviour
         targetPosition = rb.position;
         initialPosition = rb.position;
         transform.localScale = Vector3.zero;
-        SetSize(1);
+        SetSize(3);
     }
 
     private void FixedUpdate()
@@ -90,10 +90,31 @@ public class Bubble : MonoBehaviour
         }
     }
 
+    // Nueva función para alinear la posición al centro de la grid
+    private Vector2 AlignToGrid(Vector2 position)
+    {
+        float alignedX = Mathf.Floor(position.x) + 0.5f;
+        float alignedY = Mathf.Floor(position.y) + 0.5f;
+        return new Vector2(alignedX, alignedY);
+    }
+
     private void MoveInDirection()
     {
+        // Calculamos la nueva posición basada en la dirección y la velocidad
         Vector2 newPos = rb.position + direction * SPEED * Time.fixedDeltaTime;
-        rb.MovePosition(Vector2.Lerp(rb.position, newPos, MOVEMENT_INTERPOLATION));
+        
+        // Alineamos la posición perpendicular al movimiento al centro de la grid
+        if (direction.x != 0)
+        {
+            newPos.y = AlignToGrid(newPos).y;
+        }
+        else if (direction.y != 0)
+        {
+            newPos.x = AlignToGrid(newPos).x;
+        }
+        
+        // Movemos la burbuja a la nueva posición alineada sin interpolar
+        rb.MovePosition(newPos);
     }
 
     private bool ShouldSmoothStop()
@@ -110,7 +131,7 @@ public class Bubble : MonoBehaviour
     private void CompleteStop()
     {
         rb.linearVelocity = Vector2.zero;
-        rb.position = targetPosition;
+        rb.position = AlignToGrid(targetPosition);
         
         if (hitWall && !isShrinking && targetPosition == initialPosition)
         {
@@ -251,15 +272,18 @@ public class Bubble : MonoBehaviour
         
         if (!hitWall)
         {
-            float roundedX = Mathf.Round(transform.position.x - 0.5f) + 0.5f;
-            float roundedY = Mathf.Round(transform.position.y - 0.5f) + 0.5f;
+            // Obtenemos la posición actual alineada a la grid
+            Vector2 currentAlignedPos = AlignToGrid(rb.position);
+            
+            // Calculamos la siguiente posición en la dirección del movimiento
+            int gridSteps = GetOffsetFromSize(size);
+            Vector2 targetOffset = direction.normalized * gridSteps;
+            
+            // Establecemos la posición objetivo alineada a la grid
+            targetPosition = AlignToGrid(currentAlignedPos + targetOffset);
 
-            if (direction.x > 0) roundedX += GetOffsetFromSize(size);
-            else if (direction.x < 0) roundedX -= GetOffsetFromSize(size);
-            else if (direction.y > 0) roundedY += GetOffsetFromSize(size);
-            else if (direction.y < 0) roundedY -= GetOffsetFromSize(size);
-
-            targetPosition = new Vector2(roundedX, roundedY);
+            // Movemos la burbuja directamente a la posición objetivo
+            rb.MovePosition(targetPosition);
 
             if (removeStop && currentMap != null)
             {
@@ -268,6 +292,10 @@ public class Bubble : MonoBehaviour
         }
         
         direction = Vector2.zero;
+
+        // Alineamos la posición final para asegurar precisión
+        rb.position = AlignToGrid(rb.position);
+        transform.position = AlignToGrid(transform.position);
     }
 
     public void SetSize(int newSize)
@@ -284,11 +312,8 @@ public class Bubble : MonoBehaviour
 
     static int GetOffsetFromSize(int tileSize)
     {
-        if (tileSize == 1) return 1;
-        if (tileSize == 3) return 1;
-        if (tileSize == 5) return 2; 
-        if (tileSize == 7) return 3; 
-        return 1; 
+        // Simplificamos el offset para que sea más predecible
+        return Mathf.Max(1, (tileSize + 1) / 2);
     }
 
     public void OnDeathAnimationComplete()
@@ -331,20 +356,16 @@ public class Bubble : MonoBehaviour
 
     private void ResetPosition()
     {
-        // Aseguramos que todas las posiciones están correctamente alineadas a la grilla
-        float roundedX = Mathf.Round(initialPosition.x - 0.5f) + 0.5f;
-        float roundedY = Mathf.Round(initialPosition.y - 0.5f) + 0.5f;
-        Vector2 alignedPosition = new Vector2(roundedX, roundedY);
+        // Alineamos con el centro de la tile
+        Vector2 alignedPosition = AlignToGrid(initialPosition);
         
         rb.position = alignedPosition;
         transform.position = alignedPosition;
         targetPosition = alignedPosition;
         initialPosition = alignedPosition;
         
-        // Detenemos cualquier velocidad residual
         rb.linearVelocity = Vector2.zero;
         rb.angularVelocity = 0f;
-        rb.linearVelocity = Vector2.zero;
     }
 
     private void ResetLevel()
