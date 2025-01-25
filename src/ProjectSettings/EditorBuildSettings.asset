@@ -8,15 +8,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MainMenu.unity
     guid: aa7f6423a790afd4f8e73d8039d49319
-  - enabled: 0
-    path: Assets/Scenes/Bubble Demo.unity
-    guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
     path: Assets/Scenes/Levels/Level 1.unity
     guid: 092079bd2d317c9439fbb62441772ea1
-  - enabled: 0
-    path: Assets/Scenes/Stop Demo.unity
-    guid: 5265508ae1c700b45a47243ee7214abf
+  - enabled: 1
+    path: Assets/Scenes/Levels/Level 2.unity
+    guid: e78ec8f1ae6234243aeef1d6795b147b
+  - enabled: 1
+    path: Assets/Scenes/Levels/Level 3.unity
+    guid: 49bbb817021e23e40a8c445706fce304
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
