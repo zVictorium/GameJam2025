@@ -52673,7 +52673,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5085685488532156958, guid: 52af6c0126d2cf84d8e7ab6ea65d948e, type: 3}
       propertyPath: m_Radius
-      value: 0.0001
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 5529843123359013687, guid: 52af6c0126d2cf84d8e7ab6ea65d948e, type: 3}
       propertyPath: m_Name
