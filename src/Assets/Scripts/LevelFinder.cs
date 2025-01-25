@@ -13,12 +13,12 @@ public class LevelFinder : MonoBehaviour
     void UpdateLevelText()
     {
         // Obtén el índice de la escena activa
-        int currentLevel = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex + 1;
+        int currentLevel = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
 
         // Actualiza el texto del TMP_Text con el nivel
         if (levelText != null)
         {
-            levelText.text = "Level: " + currentLevel;
+            levelText.text = "Level: " + (currentLevel - 1);
         }
         else
         {
