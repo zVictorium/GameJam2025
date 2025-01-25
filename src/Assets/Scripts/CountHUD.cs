@@ -36,7 +36,7 @@ public class CountHUD : MonoBehaviour
         
         if (collected != lastCollectedPoints || total != lastTotalPoints)
         {
-            counterText.text = $"Puntos: {collected}/{total}";
+            counterText.text = $"Bubbles: {collected}/{total}";
             lastCollectedPoints = collected;
             lastTotalPoints = total;
         }
