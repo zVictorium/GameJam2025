@@ -15,7 +15,8 @@ public class Medusa : MonoBehaviour
         
         if (movingToB)
         {
-            transform.position = Vector3.Lerp(positionA, positionB, lerpTime);
+            float smoothValue = Mathf.SmoothStep(0f, 1f, lerpTime);
+            transform.position = Vector3.Lerp(positionA, positionB, smoothValue);
             if (lerpTime >= 1f)
             {
                 lerpTime = 0f;
@@ -24,7 +25,8 @@ public class Medusa : MonoBehaviour
         }
         else
         {
-            transform.position = Vector3.Lerp(positionB, positionA, lerpTime);
+            float smoothValue = Mathf.SmoothStep(0f, 1f, lerpTime);
+            transform.position = Vector3.Lerp(positionB, positionA, smoothValue);
             if (lerpTime >= 1f)
             {
                 lerpTime = 0f;
