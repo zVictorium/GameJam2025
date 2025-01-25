@@ -12,8 +12,11 @@ EditorBuildSettings:
     path: Assets/Scenes/Bubble Demo.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
+    path: Assets/Scenes/Stop Demo.unity
+    guid: 5265508ae1c700b45a47243ee7214abf
+  - enabled: 1
     path: Assets/Scenes/Level 1.unity
-    guid: 04649b6f62fdc12409ecbdca680bc0db
+    guid: 092079bd2d317c9439fbb62441772ea1
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

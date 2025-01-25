@@ -43,4 +43,9 @@ public class Point : MonoBehaviour
     {
         Hide();
     }
+
+    public bool IsVisible()
+    {
+        return spriteRenderer != null && spriteRenderer.enabled;
+    }
 }
