@@ -83,7 +83,7 @@ public class Bubble : MonoBehaviour
     {
         if (isMovingToTorbellino)
         {
-            // Movimiento suave hacia el torbellino
+            // Movimiento suave hacia el torbellino o meta
             Vector2 currentPos = transform.position;
             Vector2 newPos = Vector2.Lerp(currentPos, targetPosition, Time.deltaTime * TORBELLINO_LERP_SPEED);
             rb.MovePosition(newPos);
@@ -94,8 +94,11 @@ public class Bubble : MonoBehaviour
                 isMovingToTorbellino = false;
                 transform.position = targetPosition;
                 rb.position = targetPosition;
-                currentTorbellino.DisableVisuals();
-                currentTorbellino = null;
+                if (currentTorbellino != null)
+                {
+                    currentTorbellino.DisableVisuals();
+                    currentTorbellino = null;
+                }
             }
             return;
         }
@@ -229,13 +232,18 @@ public class Bubble : MonoBehaviour
         
         if (meta.IsActive())
         {
-            SetSize(1);  // Hacemos que la burbuja desaparezca
-            Stop(false); // Primero detenemos la bola
+            SetSize(0); // Hacemos que la burbuja se encoja
+            targetPosition = meta.transform.position;
+            isMoving = false;
+            isMovingToTorbellino = true;
+            currentTorbellino = null;
+            direction = Vector2.zero;
+            rb.linearVelocity = Vector2.zero;
             StartCoroutine(LoadNextLevelWithDelay(meta));
         }
         else
         {
-            HandleWallCollision(); // Si no está activa, se comporta como pared
+            HandleWallCollision();
         }
     }
     
@@ -265,14 +273,11 @@ public class Bubble : MonoBehaviour
             currentScale = Mathf.SmoothDamp(currentScale, targetScale, ref scaleVelocity, SCALE_DURATION);
             transform.localScale = new Vector3(currentScale, currentScale, 1f);
             
-            Debug.Log($"UpdateScale -> size:{size}, currentScale:{currentScale}, targetScale:{targetScale}, isShrinking:{isShrinking}");
-            
             if (isShrinking && currentScale < 0.01f)
             {
                 currentScale = 0f;
                 transform.localScale = Vector3.zero;
                 isShrinking = false;
-                Debug.Log("Shrinking complete!");
             }
         }
     }
@@ -296,14 +301,12 @@ public class Bubble : MonoBehaviour
 
     public void SetSize(int newSize)
     {
-        Debug.Log($"SetSize called with newSize:{newSize} (previous size:{size})");
         size = newSize;
         targetScale = newSize;
         if (newSize == 0)
         {
             isShrinking = true;
         }
-        Debug.Log($"After SetSize -> size:{size}, targetScale:{targetScale}, isShrinking:{isShrinking}");
     }
 
     static int GetOffsetFromSize(int tileSize)
@@ -314,18 +317,12 @@ public class Bubble : MonoBehaviour
 
     public void OnDeathAnimationComplete()
     {
-        Debug.Log("OnDeathAnimationComplete - Before reset -> " +
-                  $"size:{size}, currentScale:{currentScale}, targetScale:{targetScale}");
-        
         // Primero reseteamos el tamaño
         size = 0;
         currentScale = 0f;
         targetScale = 0f;
         transform.localScale = Vector3.zero;
         isShrinking = false;
-
-        Debug.Log("After size reset -> " +
-                  $"size:{size}, currentScale:{currentScale}, targetScale:{targetScale}");
 
         // Luego la posición
         ResetPosition();
@@ -336,9 +333,6 @@ public class Bubble : MonoBehaviour
         // Por último el nivel y establecemos el tamaño inicial
         ResetLevel();
         SetSize(1);
-        
-        Debug.Log("OnDeathAnimationComplete - Final state -> " +
-                  $"size:{size}, currentScale:{currentScale}, targetScale:{targetScale}");
     }
 
     private void ResetGameState()
