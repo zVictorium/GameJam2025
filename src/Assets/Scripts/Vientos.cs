@@ -34,7 +34,7 @@ public class Vientos : MonoBehaviour
     // Método para cambiar la visibilidad usando opacidad
     public void SetVisibility(bool isVisible)
     {
-        float maxAlpha = 20f/255f; // Aproximadamente 0.078
+        float maxAlpha = 10f/255f; // Aproximadamente 0.078
         float targetAlpha = isVisible ? maxAlpha : 0f;
         StopAllCoroutines(); // Detener cualquier fade en progreso
         StartCoroutine(FadeSprites(targetAlpha, 0.2f)); // Aumentado a 2 segundos
