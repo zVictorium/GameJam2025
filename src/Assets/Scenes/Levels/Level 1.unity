@@ -135078,6 +135078,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1807891149423498892, guid: cdafe34dcda287d4488e6e61a7a45167, type: 3}
+      propertyPath: m_Volume
+      value: 0.4
+      objectReference: {fileID: 0}
     - target: {fileID: 2170155131757718888, guid: cdafe34dcda287d4488e6e61a7a45167, type: 3}
       propertyPath: m_Name
       value: Efecto meta
