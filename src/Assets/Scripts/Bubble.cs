@@ -263,6 +263,8 @@ public class Bubble : MonoBehaviour
     {
         if (other.TryGetComponent<Torbellino>(out var torbellino))
         {
+            animator.SetBool("Horizontal", false);
+            animator.SetBool("Vertical", false);
             targetPosition = torbellino.GetPosition();
             isMoving = false;
             isMovingToTorbellino = true;
