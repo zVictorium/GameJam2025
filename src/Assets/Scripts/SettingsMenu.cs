@@ -3,6 +3,12 @@ using UnityEngine.Audio;
 public class SettingsMenu : MonoBehaviour
 {
     [SerializeField] private AudioMixer audioMixer;
+
+    void Update() {
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            SceneManager.LoadScene("MainMenu");
+        }
+    }
     public void SetVolume(float volume) {
         Debug.Log(volume);
     }
