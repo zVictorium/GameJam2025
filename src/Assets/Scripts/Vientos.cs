@@ -1,7 +1,10 @@
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 
 public class Vientos : MonoBehaviour
 {
+    [SerializeField] private AnimationCurve fadeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
     private SpriteRenderer[] childRenderers;
 
     void Start()
@@ -28,12 +31,50 @@ public class Vientos : MonoBehaviour
         }
     }
 
-    // Método para cambiar la visibilidad
+    // Método para cambiar la visibilidad usando opacidad
     public void SetVisibility(bool isVisible)
     {
+        float maxAlpha = 20f/255f; // Aproximadamente 0.078
+        float targetAlpha = isVisible ? maxAlpha : 0f;
+        StopAllCoroutines(); // Detener cualquier fade en progreso
+        StartCoroutine(FadeSprites(targetAlpha, 0.2f)); // Aumentado a 2 segundos
+    }
+
+    private IEnumerator FadeSprites(float targetAlpha, float duration)
+    {
+        float elapsedTime = 0;
+        Dictionary<SpriteRenderer, float> startAlphas = new Dictionary<SpriteRenderer, float>();
+
+        // Guardar alphas iniciales
         foreach (var renderer in childRenderers)
         {
-            renderer.enabled = isVisible;
+            startAlphas[renderer] = renderer.color.a;
+        }
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / duration;
+            float evaluatedT = fadeCurve.Evaluate(t);
+
+            foreach (var renderer in childRenderers)
+            {
+                float startAlpha = startAlphas[renderer];
+                float newAlpha = Mathf.Lerp(startAlpha, targetAlpha, evaluatedT);
+                Color color = renderer.color;
+                color.a = newAlpha;
+                renderer.color = color;
+            }
+            
+            yield return null;
+        }
+
+        // Asegurar valor final
+        foreach (var renderer in childRenderers)
+        {
+            Color color = renderer.color;
+            color.a = targetAlpha;
+            renderer.color = color;
         }
     }
 

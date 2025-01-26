@@ -145,6 +145,9 @@ public class Bubble : MonoBehaviour
         else
         {
             vientosEffect.SetVisibility(false);
+            animator.SetBool("Horizontal", false);
+            animator.SetBool("Vertical", false);
+            
             if (ShouldSmoothStop())
             {
                 SmoothStop();
@@ -218,6 +221,10 @@ public class Bubble : MonoBehaviour
         if (isShrinking || hitWall) return;
         direction = newDirection;
         isMoving = true;
+
+        // Activar los parámetros del animator según la dirección
+        animator.SetBool("Horizontal", Mathf.Abs(newDirection.x) > 0);
+        animator.SetBool("Vertical", Mathf.Abs(newDirection.y) > 0);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -260,6 +267,8 @@ public class Bubble : MonoBehaviour
         hitWall = true;
         Stop();
         animator.SetTrigger("Death");
+        animator.SetBool("Horizontal", false);
+        animator.SetBool("Vertical", false);
         isPlayingDeathAnimation = true;
     }
 
@@ -286,6 +295,8 @@ public class Bubble : MonoBehaviour
             currentTorbellino = null;
             direction = Vector2.zero;
             rb.linearVelocity = Vector2.zero;
+            animator.SetBool("Horizontal", false);
+            animator.SetBool("Vertical", false);
             StartCoroutine(LoadNextLevelWithDelay(meta));
         }
         else
@@ -353,6 +364,10 @@ public class Bubble : MonoBehaviour
         isMovingToTorbellino = false;
         vientosEffect.SetVisibility(false); // Ocultar vientos al detenerse
         
+        // Desactivar los parámetros del animator
+        animator.SetBool("Horizontal", false);
+        animator.SetBool("Vertical", false);
+        
         if (!hitWall)
         {
             rb.position = targetPosition;
@@ -406,6 +421,8 @@ public class Bubble : MonoBehaviour
         isMoving = false;
         direction = Vector2.zero;
         collectedPoints = 0; // Reseteamos los puntos recolectados
+        animator.SetBool("Horizontal", false);
+        animator.SetBool("Vertical", false);
     }
 
     private void ResetPosition()
