@@ -6,6 +6,7 @@ public class Bubble : MonoBehaviour
 {
     [SerializeField] private GameObject transitionCanvas; // Añadir esta línea al inicio de la clase
     private Vientos vientosEffect; // Eliminar SerializeField
+    private AudioSource efectoMetaAudio; // Nueva variable
 
     private const float SPEED = 15.0f;
     private const float STOPPING_LERP_SPEED = 0.5f;
@@ -83,6 +84,17 @@ public class Bubble : MonoBehaviour
         allPoints = FindObjectsByType<Point>(FindObjectsSortMode.None);
         allKeys = FindObjectsByType<Key>(FindObjectsSortMode.None);
         allTorbellinos = FindObjectsByType<Torbellino>(FindObjectsSortMode.None);
+
+        // Buscar el Audio Source del efecto meta
+        GameObject efectoMeta = GameObject.Find("Efecto meta");
+        if (efectoMeta != null)
+        {
+            efectoMetaAudio = efectoMeta.GetComponent<AudioSource>();
+        }
+        else
+        {
+            Debug.LogWarning("No se encontró el objeto 'Efecto meta'");
+        }
     }
 
     private void InitializePhysics()
@@ -280,6 +292,12 @@ public class Bubble : MonoBehaviour
         SetSize(size + 2);
         point.Hide();
         collectedPoints++;
+
+        // Reproducir sonido cuando se recolecten todos los puntos
+        if (collectedPoints == totalPoints && efectoMetaAudio != null)
+        {
+            efectoMetaAudio.Play();
+        }
     }
 
     private void HandleMetaCollision(Collider2D other)
