@@ -23,6 +23,10 @@ public class Key : MonoBehaviour
         wasCollected = true;
         if (keyCollider != null) keyCollider.enabled = false;
         if (spriteRenderer != null) spriteRenderer.enabled = false;
+        if (tilemap != null) 
+        {
+            tilemap.GetComponent<TilemapCollider2D>().enabled = false;
+        }
         StartCoroutine(FadeOut());
     }
 
