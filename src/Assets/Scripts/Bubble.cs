@@ -8,6 +8,7 @@ public class Bubble : MonoBehaviour
     private Vientos vientosEffect; // Eliminar SerializeField
     private AudioSource efectoMetaAudio; // Nueva variable
     private AudioSource efectoLlaveAudio; // Nueva variable
+    private AudioSource efectoPopAudio; // Nueva variable
 
     private const float SPEED = 15.0f;
     private const float STOPPING_LERP_SPEED = 0.5f;
@@ -106,6 +107,17 @@ public class Bubble : MonoBehaviour
         else
         {
             Debug.LogWarning("No se encontró el objeto 'Efecto llave'");
+        }
+
+        // Buscar el Audio Source del efecto pop
+        GameObject efectoPop = GameObject.Find("Efecto pop");
+        if (efectoPop != null)
+        {
+            efectoPopAudio = efectoPop.GetComponent<AudioSource>();
+        }
+        else
+        {
+            Debug.LogWarning("No se encontró el objeto 'Efecto pop'");
         }
     }
 
@@ -296,6 +308,12 @@ public class Bubble : MonoBehaviour
         animator.SetBool("Horizontal", false);
         animator.SetBool("Vertical", false);
         isPlayingDeathAnimation = true;
+
+        // Reproducir sonido de pop cuando la burbuja explota
+        if (efectoPopAudio != null)
+        {
+            efectoPopAudio.Play();
+        }
     }
 
     private void HandlePointCollision(Collider2D other)
