@@ -3,7 +3,7 @@ using UnityEngine;
 public class Point : MonoBehaviour
 {
     private SpriteRenderer spriteRenderer;
-    private Collider2D pointCollider;
+    private CircleCollider2D circleCollider;
 
     private void Start()
     {
@@ -14,29 +14,29 @@ public class Point : MonoBehaviour
             spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         }
         
-        pointCollider = GetComponent<Collider2D>();
+        circleCollider = GetComponent<CircleCollider2D>();
 
         // Verificar que tenemos los componentes necesarios
         if (spriteRenderer == null)
         {
             Debug.LogError("No se encontró SpriteRenderer en Point ni en sus hijos");
         }
-        if (pointCollider == null)
+        if (circleCollider == null)
         {
-            Debug.LogError("No se encontró Collider2D en Point");
+            Debug.LogError("No se encontró CircleCollider2D en Point");
         }
     }
 
     public void Hide()
     {
         if (spriteRenderer != null) spriteRenderer.enabled = false;
-        if (pointCollider != null) pointCollider.enabled = false;
+        if (circleCollider != null) circleCollider.enabled = false;
     }
 
     public void Show()
     {
         if (spriteRenderer != null) spriteRenderer.enabled = true;
-        if (pointCollider != null) pointCollider.enabled = true;
+        if (circleCollider != null) circleCollider.enabled = true;
     }
 
     public void Remove()

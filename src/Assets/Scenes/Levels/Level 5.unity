@@ -86350,7 +86350,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4439440573098118354, guid: 575a02314deb6854f954db8d8db0b9e8, type: 3}
       propertyPath: m_SortingOrder
-      value: 6
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4439440573098118354, guid: 575a02314deb6854f954db8d8db0b9e8, type: 3}
       propertyPath: m_SortingLayerID
@@ -107901,7 +107901,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3578838019392339393, guid: 41ba2660ff374934e986e0427ba7adb3, type: 3}
       propertyPath: m_SortingOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5613509441119118999, guid: 41ba2660ff374934e986e0427ba7adb3, type: 3}
       propertyPath: m_LayerOverridePriority

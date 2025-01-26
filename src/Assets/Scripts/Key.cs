@@ -5,63 +5,62 @@ using System.Collections;
 public class Key : MonoBehaviour
 {
     [SerializeField] private Tilemap tilemap;
-    [SerializeField] private float fadeOutDuration = 1f;
-    [SerializeField] private AnimationCurve fadeCurve;
-    
+    private Color originalColor;
     private SpriteRenderer spriteRenderer;
+    
     private Collider2D keyCollider;
     private bool wasCollected = false;
 
     private void Start()
     {
-        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         keyCollider = GetComponent<Collider2D>();
-        if (fadeCurve == null)
-        {
-            fadeCurve = AnimationCurve.EaseInOut(0, 1, 1, 0);
-        }
+        originalColor = tilemap.color;
+        spriteRenderer = transform.Find("Visuals").GetComponent<SpriteRenderer>();
     }
 
     public void Hide()
     {
-        if (spriteRenderer != null) spriteRenderer.enabled = false;
-        if (keyCollider != null) keyCollider.enabled = false;
-        if (tilemap != null) 
-        {
-            StartCoroutine(FadeOutTilemap());
-        }
         wasCollected = true;
+        if (keyCollider != null) keyCollider.enabled = false;
+        if (spriteRenderer != null) spriteRenderer.enabled = false;
+        StartCoroutine(FadeOut());
     }
 
-    private IEnumerator FadeOutTilemap()
+    private IEnumerator FadeOut()
     {
-        TilemapRenderer tilemapRenderer = tilemap.GetComponent<TilemapRenderer>();
-        Color originalColor = tilemapRenderer.material.color;
-        float elapsedTime = 0f;
+        float duration = 1f; // duración del fade en segundos
+        float elapsed = 0f;
+        Color originalColor = tilemap.color;
 
-        while (elapsedTime < fadeOutDuration)
+        while (elapsed < duration)
         {
-            elapsedTime += Time.deltaTime;
-            float normalizedTime = elapsedTime / fadeOutDuration;
-            float alpha = fadeCurve.Evaluate(1 - normalizedTime);
-            
-            tilemapRenderer.material.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
+            elapsed += Time.deltaTime;
+            float normalizedTime = elapsed / duration;
+            Color newColor = originalColor;
+            newColor.a = 1f - normalizedTime;
+            tilemap.color = newColor;
             yield return null;
         }
 
-        tilemap.gameObject.SetActive(false);
-        tilemap.GetComponent<TilemapCollider2D>().enabled = false;
+        if (tilemap != null) 
+        {
+            tilemap.enabled = false;
+            tilemap.gameObject.SetActive(false);
+            tilemap.GetComponent<TilemapCollider2D>().enabled = false;
+        }
     }
 
     public void Show()
     {
-        if (spriteRenderer != null) spriteRenderer.enabled = true;
-        if (keyCollider != null) keyCollider.enabled = true;
         if (tilemap != null) 
         {
+            tilemap.enabled = true;
+            tilemap.color = originalColor;
             tilemap.gameObject.SetActive(true);
             tilemap.GetComponent<TilemapCollider2D>().enabled = true;
         }
+        if (keyCollider != null) keyCollider.enabled = true;
+        if (spriteRenderer != null) spriteRenderer.enabled = true;
         wasCollected = false;
     }
 
