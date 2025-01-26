@@ -44,5 +44,11 @@ TagManager:
   - name: Bubbles
     uniqueID: 937453549
     locked: 0
+  - name: Texto
+    uniqueID: 3290930755
+    locked: 0
+  - name: Mar 1
+    uniqueID: 2327431195
+    locked: 0
   m_RenderingLayers:
   - Default
