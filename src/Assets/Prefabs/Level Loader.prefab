@@ -140,7 +140,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: BIT BUBBLE
+  m_text: Ocean Escape
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: db80f43d8670cae4d9529999f7c4d65c, type: 2}
   m_sharedMaterial: {fileID: -3813149453443614046, guid: db80f43d8670cae4d9529999f7c4d65c, type: 2}
