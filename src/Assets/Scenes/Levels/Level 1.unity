@@ -134784,9 +134784,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2813749055930394515, guid: ad184f0090abe4f4283fdba4b784a0b1, type: 3}
-      propertyPath: m_Alpha
-      value: 0
+    - target: {fileID: 4457598462652543946, guid: ad184f0090abe4f4283fdba4b784a0b1, type: 3}
+      propertyPath: m_Color.b
+      value: 0.8627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 4457598462652543946, guid: ad184f0090abe4f4283fdba4b784a0b1, type: 3}
+      propertyPath: m_Color.g
+      value: 0.49803922
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
