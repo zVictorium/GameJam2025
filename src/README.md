@@ -1,45 +1,56 @@
-# GameJam2025
+# Ocean Escape
 
-Un juego emocionante creado para la GameJam 2025.
+Un juego de puzles y habilidad desarrollado para la GlobalGameJam 2025.
 
-## Descripción
+## 🎮 Descripción
 
-GameJam2025 es un juego de aventuras donde los jugadores deben superar desafíos y resolver acertijos para avanzar a través de niveles únicos y emocionantes.
+En Ocean Escape controlas una burbuja mágica que debe recorrer las profundidades del océano recolectando burbujas amarillas para activar tuberías de escape. Navega a través de corrientes marinas, evita medusas y descubre secretos ocultos en las profundidades. ¡Cuidado! Tu burbuja es frágil y explotará si choca contra los corales y rocas.
 
-## Requisitos
+## 🔧 Requisitos del Sistema
 
-- Unity 2021.1
-- Sistema Operativo: Windows/Mac/Linux
-- 4 GB de RAM mínimo
+- Unity 2021.1 o superior
+- Sistema Operativo:
+  - Windows 10/11
+  - macOS 10.15+
+  - Ubuntu 20.04+
+- 4 GB de RAM
 - Tarjeta gráfica compatible con DirectX 11
+- 500 MB de espacio en disco
 
-## Instalación
+## 📥 Instalación
 
-1. Clona este repositorio:
-   ```sh
-   git clone https://github.com/tu_usuario/GameJam2025.git
-   ```
-2. Abre el proyecto en Unity:
-   - Abre Unity Hub
-   - Selecciona "Add" y navega hasta la carpeta del proyecto clonado
-3. Ejecuta la escena principal:
-   - En el panel "Project", navega hasta `Assets/final.unity`
-   - Haz doble clic en `final.unity` para abrir la escena
-   - Haz clic en el botón "Play" para iniciar el juego
+1. Descarga el proyecto.
+2. Ejecuta el BubbleEscape.exe.
 
-## Cómo Jugar
+## 🎯 Cómo Jugar
 
-- Usa las teclas de flecha o WASD para mover al personaje.
-- Presiona la barra espaciadora para saltar.
-- Interactúa con objetos usando la tecla "E".
-- Completa los niveles resolviendo acertijos y evitando obstáculos.
+### Controles Básicos
+- **Movimiento**: Flechas direccionales o WASD
+  - ↑ o W: Mover hacia arriba
+  - ↓ o S: Mover hacia abajo
+  - ← o A: Mover hacia la izquierda
+  - → o D: Mover hacia la derecha
 
-## Créditos
+### Mecánicas
+- La burbuja se mueve en línea recta hasta encontrar un obstáculo
+- Recolecta todas las burbujas amarillas para abrir la tubería de escape
+- La burbuja crece al recolectar burbujas amarillas
+- Impulsate de torbellino a torbellino para desplazarte
+- Encuentra llaves para abrir nuevos caminos
+- ¡Evita tocar las paredes o medusas, la burbuja explotará!
 
-Desarrollado por:
-- Víctor Huertes
-- Miguel Ardite
-- Abraham Ruiz
-- Jan Diez de los Ríos
+## 🏆 Características
 
-© 2025 GameJam2025. Todos los derechos reservados.
+- 9 niveles submarinos con dificultad progresiva
+- Mecánicas de puzle acuáticas innovadoras
+- Efectos visuales submarinos cautivadores
+- Banda sonora oceánica original
+- Sistema de progresión por niveles
+- Ambientación marina inmersiva
+
+## 👥 Equipo de Desarrollo
+
+- **Víctor Huertes** - Coder
+- **Miguel Ardite** - Artist
+- **Abraham Ruiz** - Level Designer
+- **Jan Díez de los Rios** - UI Designer
