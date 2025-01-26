@@ -93896,15 +93896,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3578838019392339393, guid: 41ba2660ff374934e986e0427ba7adb3, type: 3}
       propertyPath: m_Color.b
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3578838019392339393, guid: 41ba2660ff374934e986e0427ba7adb3, type: 3}
       propertyPath: m_Color.g
-      value: 1
+      value: 0.96862745
       objectReference: {fileID: 0}
     - target: {fileID: 3578838019392339393, guid: 41ba2660ff374934e986e0427ba7adb3, type: 3}
       propertyPath: m_Color.r
-      value: 1
+      value: 0.16470589
       objectReference: {fileID: 0}
     - target: {fileID: 6655713009763231014, guid: 41ba2660ff374934e986e0427ba7adb3, type: 3}
       propertyPath: m_Name
