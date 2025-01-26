@@ -21400,6 +21400,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3577828520174646231, guid: 52af6c0126d2cf84d8e7ab6ea65d948e, type: 3}
+      propertyPath: m_SortingOrder
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 5529843123359013687, guid: 52af6c0126d2cf84d8e7ab6ea65d948e, type: 3}
       propertyPath: m_Name
       value: Bubble

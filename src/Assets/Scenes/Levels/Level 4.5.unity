@@ -21399,9 +21399,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 171861361795470627, guid: fbcda0c3e371ae745be51da3cd16ef9c, type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1322082631202017440, guid: fbcda0c3e371ae745be51da3cd16ef9c, type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1551352676258524843, guid: fbcda0c3e371ae745be51da3cd16ef9c, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1614965724749727028, guid: fbcda0c3e371ae745be51da3cd16ef9c, type: 3}
       propertyPath: m_Name
       value: HUD
+      objectReference: {fileID: 0}
+    - target: {fileID: 1614965724749727028, guid: fbcda0c3e371ae745be51da3cd16ef9c, type: 3}
+      propertyPath: m_Layer
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1974658741624262529, guid: fbcda0c3e371ae745be51da3cd16ef9c, type: 3}
       propertyPath: m_Pivot.x
@@ -22150,6 +22166,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Level Loader
       objectReference: {fileID: 0}
+    - target: {fileID: 2011277576201660986, guid: ad184f0090abe4f4283fdba4b784a0b1, type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 2343749862124036679, guid: ad184f0090abe4f4283fdba4b784a0b1, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.32617956
@@ -22189,6 +22209,10 @@ PrefabInstance:
     - target: {fileID: 2343749862124036679, guid: ad184f0090abe4f4283fdba4b784a0b1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3606478176271249797, guid: ad184f0090abe4f4283fdba4b784a0b1, type: 3}
+      propertyPath: m_SortingOrder
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -24841,9 +24865,9 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 391383850}
+  - {fileID: 899934132}
   - {fileID: 597031554}
   - {fileID: 1419839108}
-  - {fileID: 899934132}
   - {fileID: 957919333}
   - {fileID: 1547125938}
   - {fileID: 383899139}
