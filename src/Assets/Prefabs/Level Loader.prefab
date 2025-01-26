@@ -142,8 +142,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Ocean Escape
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: dc53ba3d3feb7df45839091d9d54c9fe, type: 2}
-  m_sharedMaterial: {fileID: 3128014681744078380, guid: dc53ba3d3feb7df45839091d9d54c9fe, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: db80f43d8670cae4d9529999f7c4d65c, type: 2}
+  m_sharedMaterial: {fileID: -3424019559227410830, guid: db80f43d8670cae4d9529999f7c4d65c, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
