@@ -19,6 +19,6 @@ public class LevelFinder : MonoBehaviour
     void UpdateLevelText()
     {
         int currentLevel = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
-        levelText.text = "Level: " + (currentLevel - 1);
+        levelText.text = "Level " + (currentLevel - 1);
     }
 }
