@@ -11,12 +11,6 @@ public class Torbellino : MonoBehaviour
         col2D = GetComponent<Collider2D>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public Vector3 GetPosition()
     {
         return transform.position;
