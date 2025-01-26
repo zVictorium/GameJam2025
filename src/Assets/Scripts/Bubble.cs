@@ -7,6 +7,7 @@ public class Bubble : MonoBehaviour
     [SerializeField] private GameObject transitionCanvas; // Añadir esta línea al inicio de la clase
     private Vientos vientosEffect; // Eliminar SerializeField
     private AudioSource efectoMetaAudio; // Nueva variable
+    private AudioSource efectoLlaveAudio; // Nueva variable
 
     private const float SPEED = 15.0f;
     private const float STOPPING_LERP_SPEED = 0.5f;
@@ -94,6 +95,17 @@ public class Bubble : MonoBehaviour
         else
         {
             Debug.LogWarning("No se encontró el objeto 'Efecto meta'");
+        }
+
+        // Buscar el Audio Source del efecto llave
+        GameObject efectoLlave = GameObject.Find("Efecto llave");
+        if (efectoLlave != null)
+        {
+            efectoLlaveAudio = efectoLlave.GetComponent<AudioSource>();
+        }
+        else
+        {
+            Debug.LogWarning("No se encontró el objeto 'Efecto llave'");
         }
     }
 
@@ -329,6 +341,12 @@ public class Bubble : MonoBehaviour
         if (isPlayingDeathAnimation) return;
         
         key.Hide();
+        
+        // Reproducir sonido al recoger la llave
+        if (efectoLlaveAudio != null)
+        {
+            efectoLlaveAudio.Play();
+        }
     }
     
     private IEnumerator LoadNextLevelWithDelay(Meta meta)
